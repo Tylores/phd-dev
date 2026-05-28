@@ -1,0 +1,6 @@
+[submodule "dissertation"]
+	path = dissertation
+	url = ./dissertation
+[submodule "egot"]
+	path = egot
+	url = ./egot
