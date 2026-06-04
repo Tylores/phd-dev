@@ -42,57 +42,108 @@ The ESI serves as the core architectural implementation of **layered decompositi
 
 ---
 
-### 1.2 The Four Pillars of the ESI
-To validate that an interface implementation constitutes a true ESI, it must satisfy the four core pillars:
+### 1.2 The Four Pillars of the ESI and their Technical Tenets
+To validate that an interface implementation constitutes a true ESI, it must satisfy four core pillars: Privacy, Security, Trust, and Interoperability. While these pillars define the conceptual goals of the customer-grid boundary, their practical enforcement is governed by eight fundamental architectural tenets outlined by the Grid Modernization Laboratory Consortium (GMLC) \cite{brown_guide_2024}:
+
+1. **Service-Oriented Interface:** The interface communicates *what* physical service is needed, not *how* to deliver it.
+2. **Device Agnosticism:** ESI services target abstract capabilities, never specific device classes or vendor-specific technologies.
+3. **Provider-Side Aggregation:** The provider coordinates and abstracts all internal devices, exposing only a single, collective capacity at the connection point.
+4. **Precisely Two-Party Contracts:** All ESI agreements exist between exactly two actors (the requestor and the provider). Multi-party interactions are decomposed into nested, pairwise relationships.
+5. **Contractual Codification:** Provision of services is codified by formal, contract-like agreements specifying obligations, performance margins, and penalties.
+6. **Information Privacy Preservation:** The internal objectives of the requestor and the low-level means/procurement values of the provider are never shared across the ESI.
+7. **Hierarchical and Distributed Control:** The ESI naturally supports recursive nesting, where a service provider can act as a requestor for a downstream ESI.
+8. **Interoperable Decidability:** Qualifications and terms are represented in machine-decipherable formats that resolve deterministically.
+
+The mapping of these tenets to the four ESI pillars is structured as follows:
 
 #### 1.2.1 Privacy
-DER operational telemetry—particularly high-resolution power consumption and generation profiles—is highly correlated with personal private information (PPI). High-frequency active power profiles can be disaggregated using Non-Intrusive Load Monitoring (NILM) techniques to identify specific appliance use patterns, household occupancy, and user habits \cite{zeifman_nonintrusive_2011}. Therefore, the ESI must enforce **information isolation**. Telemetry data must be restricted to the minimum granularity required for grid service validation, and database schemas must logically separate billing/account identities from real-time operational database states. 
+DER operational telemetry is highly correlated with personal private information (PPI). High-frequency active power profiles can be disaggregated using Non-Intrusive Load Monitoring (NILM) techniques to identify user habits and household occupancy \cite{zeifman_nonintrusive_2011}. Privacy can be protected at the boundary through cryptographic methods or via physical load-shaping using local energy storage systems to mask consumption signatures \cite{kement_privacy_2021}. The ESI enforces **information isolation** by implementing the tenets of **Asset Privacy** and **Device Agnosticism**. The low-level asset states, device counts, and topologies remain hidden; the GSP only sees a unified, aggregated capability curve at the electrical point of connection. Database schemas must physically decouple consumer account registries from operational telemetry databases to prevent correlation attacks.
 
 #### 1.2.2 Security
-The transition from air-gapped SCADA networks to internet-connected, public-facing DER communications introduces significant cyber-physical interdependencies. Compromised DER assets present common-mode vulnerability vectors; if an attacker gains the ability to send malicious controls (e.g., forcing simultaneous battery discharge or modifying Volt-Var curves to absorb maximum reactive power), they can trigger feeder voltage collapse or transformer thermal overload. The ESI must secure the transport layer through robust cryptographic authentication, message integrity checks, and client-level access control. Furthermore, it must define the pathway for **application-layer safety constraints**—where local clients validate incoming commands against physical safety limits to prevent malicious overrides from destabilizing the local circuit.
+The transition to public-facing, internet-connected DER communications introduces major cyber-physical vulnerabilities. Compromised assets can act as common-mode attack vectors (e.g., simultaneous battery discharges triggering feeder collapse). ESI security is anchored in the **Precisely Two-Party Contract** and **Hierarchical Control** tenets. While standard security architectures rely on transport security such as Mutual TLS (mTLS), these mechanisms are blind to application-layer content. If the utility's command systems are compromised, an attacker can broadcast validly signed, standard-compliant controls (e.g., incorrect Volt-Var curves) that can trigger immediate voltage collapse on low-voltage circuits \cite{sarker_cyber-physical_2020}. Thus, the ESI must enforce **cyber-physical safety constraints** at the client application layer \cite{alsaid_privacy-preserving_2022}. Local clients parse and validate incoming curves against local physical safety boundaries (e.g., thermal ratings and voltage limits) to reject destabilizing commands, falling back to default safety curves in case of violation.
 
 #### 1.2.3 Trust
-In a transactive network, grid operators and customer-owned assets operate across distinct trust boundaries. The utility cannot assume that a consumer device will always execute dispatched setpoints (due to communication dropouts, local override commands, or hardware faults). Conversely, reputation-based trust scoring models \cite{fernando_developing_2021} introduce subjective metrics that are difficult to settle legally. The ESI resolves this by implementing **direct transactional trust based on compliance telemetry**. By comparing real-time operational telemetry directly against the scheduled targets, the ESI computes an objective compliance score, removing the dependency on subjective historical behavioral reputation.
+In active distribution grids, GSPs and customers operate across distinct commercial boundaries. GSPs cannot assume devices will execute dispatched setpoints due to overrides or communications faults. Conversely, subjective reputation scoring models \cite{fernando_developing_2021} are difficult to enforce legally. The ESI establishes **direct transactional trust** using **Contractual Codification** and **Interoperable Decidability**. By comparing real-time operational telemetry against negotiated performance variables, the GSP automatically computes objective, metrics-based compliance scores, removing the need for historical reputation tracking.
 
 #### 1.2.4 Interoperability
-An ESI must support interface uniformity. Grid operators cannot develop custom, proprietary interfaces for every vendor-specific inverter or smart home aggregator. The ESI must enforce standardized, open semantic resource schemas. This ensures that any standard-compliant asset can perform plug-and-play registration and participation in grid services, facilitating a competitive transactive market.
+GSPs cannot build custom, proprietary interfaces for every vendor-specific inverter or smart home aggregator. Interoperability is achieved via **Service-Oriented Interfaces** and **Device Agnosticism**. The ESI exposes open, standardized semantic resource schemas. Any asset meeting the physical performance criteria can register and participate in grid services in a plug-and-play manner, fostering open competition.
 
 ---
 
-### 1.3 The Five ESI Lifecycles
-All data exchanges and state transitions between a GSP and a DER client must map to the five ESI lifecycles:
+### 1.3 The ESI Behavioral Layers and the Five Lifecycles
+All communications and transactions across the ESI must conform to **Five ESI Lifecycles**: **Registration, Scheduling, Operation, Validation, and Settlement**. Rather than executing as a flat, sequential process, these lifecycles are grouped and governed by **Three Behavioral Layers**—the **Discovery, Agreement, and Service Layers**—which define the architectural states and transitions of the customer-grid interface \cite{hammerstrom_architecture_2024}:
 
 ```
-[Registration] ➔ [Scheduling] ➔ [Operation] ➔ [Validation] ➔ [Settlement]
+   ESI Behavioral Layers                     ESI Lifecycle Phases
+┌─────────────────────────┐              ┌───────────────────────────┐
+│     Discovery Layer     │ ──────────>  │                           │
+├─────────────────────────┤              │        Registration       │
+│     Agreement Layer     │ ──────────>  │                           │
+├─────────────────────────┤              ├───────────────────────────┤
+│                         │              │          Scheduling       │
+│                         │              ├───────────────────────────┤
+│                         │              │          Operation        │
+│      Service Layer      │ ──────────>  ├───────────────────────────┤
+│                         │              │          Validation       │
+│                         │              ├───────────────────────────┤
+│                         │              │          Settlement       │
+└─────────────────────────┘              └───────────────────────────┘
 ```
 
-1. **Registration**: The initial onboarding phase where the client discovers the ESI's capabilities, synchronizes its local clock with the server's time base, validates its cryptographic identity, and registers its physical capabilities (e.g., maximum active/reactive power capacity).
-2. **Scheduling**: The negotiation phase. The GSP and the client exchange profiles to establish active and reactive power allocations for a future window (e.g., day-ahead hourly schedules or 5-minute real-time market intervals).
-3. **Operation**: The execution phase. The GSP dispatches active controls or schedules autonomous curves, and the client monitors local grid conditions (frequency, voltage) to execute local power adjustments.
-4. **Validation**: The tracking phase. The client records its physical execution states, reports response confirmations (Received, Started, Completed), and logs alarms or fault events to the server.
-5. **Settlement**: The financial/credit reconciliation phase. The GSP aggregates the client's telemetry, verifies compliance against the scheduled profiles, and credits the customer's account based on performance accuracy.
+#### 1.3.1 The Discovery and Agreement Layers: Setting up Registration
+The **Discovery Layer** handles how the client and the ESI server find each other. Unlike standard web services, ESI discovery is physically constrained; the provider must reside on the target electrical region (feeder or substation) of the requestor to provide local grid support. During this setup, a default agreement of **"None—No Service"** is assigned, permitting communication initialization without creating immediate operational or financial obligations.
 
----
+The **Agreement Layer** manages the contract negotiation process, corresponding to GMLC's **Registration** phase:
+1. **Prequalification Verification:** The requestor advertises a specialized ESI service agreement template (derived from the 6 common services and modeled after the **Web Services Agreement [WS-Agreement]** specification).
+2. **Deterministic Qualification:** The provider imports the template, evaluates its own capability parameters against the template's **Agreement Creation Constraints** (using deterministic Boolean expression trees), fills in its variables, and resubmits it as a *Pending ESI Service Agreement*.
+3. **Contract Activation:** Once approved by the requestor, the contract becomes **Active (In Force)**, defining the service terms, quality of service (QoS) guarantees, rewards, and penalties.
+
+#### 1.3.2 The Service Layer: Scheduling, Operation, Validation, and Settlement
+Once a contract is in force, the ESI transitions to the **Service Layer**, which governs the remaining four operational lifecycles through the execution of **Service Events**:
+
+1. **Scheduling Lifecycle:** The requestor and provider establish active and reactive power profiles for future intervals (e.g., day-ahead or 5-minute EIM windows), moving the service event into the *Scheduled or Armed* state.
+2. **Operation Lifecycle:** When the scheduled interval begins or a contingency event is triggered, the service event enters the *Operate* state. The provider coordinates local DERs to deliver the active or reactive setpoint or execute autonomous droop settings.
+3. **Validation Lifecycle:** The service event enters the *Measured and Verified (M&V)* state. The client logs physical telemetry records (confirmations, alarms, and power measurements) and uploads them to the server's validation endpoints (e.g., `/rsps` and `/mup`). This allows the requestor to verify physical compliance with the scheduled performance targets.
+4. **Settlement Lifecycle:** The service event enters the *Settled* state. The server's billing engine compares the uploaded telemetry against the scheduled targets to calculate objective compliance scores, executing financial transfers (payments or penalties) in accordance with the codified ESI contract.
 
 ## 2. Common Grid Services Framework (Generic Models)
-
-To maintain a source-agnostic ESI, grid services must be formulated generically based on their physical active power ($P$), reactive power ($Q$), and timing characteristics.
+To maintain a source-agnostic and interoperable Energy Services Interface (ESI), grid-DER services must be formulated generically based on their physical active power ($P$), reactive power ($Q$), and timing characteristics, rather than the GSP's internal operational objectives \cite{kolln_terms_2023}. Each service is characterized by performance expectations, which combine electrical attributes (what is delivered), timing attributes (when and how fast it is delivered), and performance measurements (how it is quantified).
 
 ### 2.1 Active Power Services: Energy, Reserve, and Regulation
 
 #### 2.1.1 Energy Service
-The Energy Service is the scheduled delivery of active power over defined, macroscopic time intervals (typically 1-hour or 15-minute blocks). The goal is system-wide energy balancing and load-shifting (e.g., peak shaving). The active power target for a device $j$ at step $t$ is defined as a constant setpoint $P_{sched, j}(t)$ over the interval.
+The Energy Service is the scheduled delivery or consumption of active power over defined, macroscopic time intervals (typically 1-hour, 15-minute, or 5-minute blocks). The physical objective is macroscopic supply-demand balancing and load shifting. 
+* **Electrical Attributes:** 
+  * *Power:* Active power level $P(t)$ (kW or MW) for production (positive) or consumption (negative) over the performance period.
+  * *Energy:* Total energy quantity $E$ (kWh or MWh) delivered.
+  * *Electrical Location:* The physical injection/withdrawal node or zones in the grid.
+* **Timing Attributes:** Start time, end time, and delivery schedule notification (publishing of market clearing or dispatch schedules).
+* **Performance Measurement:** Revenue-grade interval meters measure net energy flow. For demand-side flexibility, performance is evaluated relative to a calculated baseline schedule $P_{base}(t)$ derived from historical consumption averages:
+  $$P_{actual}(t) = P_{measured}(t) - P_{base}(t)$$
 
 #### 2.1.2 Reserve Service
-The Reserve Service represents contingency active power capacity held in standby to stabilize the grid during sudden generator or line outages. The service is characterized by:
-- **Standby Capacity ($P_{res, j}$)**: The active power capacity reserved and withheld from normal market dispatch.
-- **Ramp Time ($\tau$):** The response time required to reach full output (typically $\le 10$ minutes for spinning reserves).
-- **Duration ($T_{dur}$):** The minimum period the capacity must be sustained (typically $\ge 1$ hour).
+The Reserve Service represents standby active power capacity held on-call to stabilize the grid during contingency events (e.g., generator or transmission line outages). The service has two operational modes: a standby booking state and an active dispatch state.
+* **Electrical Attributes:** 
+  * *Standby Capacity ($P_{res}$):* The maximum active power capacity (kW or MW) held in reserve.
+  * *Available Energy:* The total capacity (kWh) that can be sustained once dispatched.
+* **Timing Attributes:** 
+  * *Delivery Schedule:* Availability window (e.g., daily or hourly blocks).
+  * *Speed of Response:* The ramp time ($\tau_{ramp}$) required to reach full reserve output once a contingency dispatch signal is received (typically $\le 10$ minutes for spinning reserves, $\le 30$ minutes for non-spinning reserves).
+  * *Duration ($T_{dur}$):* The minimum period the capacity must be sustained (typically $\ge 1$ hour).
+* **Performance Measurement:** Verified by logging the exact timestamp of the contingency dispatch signal $t_{dispatch}$ and the device's output $P_{actual}(t)$. Performance requires that the reserve capacity is fully active by $t_{dispatch} + \tau_{ramp}$ and sustained for $T_{dur}$.
 
 #### 2.1.3 Regulation Service
-Regulation is a fast-tracking service used to balance sub-minute active power fluctuations caused by stochastic solar or wind variability. The control signal $P_{reg}(t)$ is updated dynamically (typically every 2 to 4 seconds). In an abstract ESI, this is formulated as a tracking error minimization problem. The GSP evaluates the client's tracking accuracy using a root-mean-square error (RMSE) metric over a dispatch window:
-
-$$RMSE = \sqrt{\frac{1}{N}\sum_{i=1}^N \left(P_{actual, j}(i) - P_{target, j}(i)\right)^2}$$
+Regulation is a high-speed tracking service used to balance rapid, sub-minute fluctuations in system frequency and area control error (ACE) caused by stochastic renewable generation. The GSP dispatches a dynamic setpoint $P_{target}(t)$ updated every 2 to 4 seconds.
+* **Electrical Attributes:**
+  * *Power Regulation Range:* The upper and lower active power boundaries ($[P_{min}, P_{max}]$) committed to tracking.
+  * *Power Mileage ($M$):* The sum of absolute active power level movements over a delivery interval $[0, T]$, which measures the total physical control effort:
+    $$M = \sum_{t=1}^T |P_{actual}(t) - P_{actual}(t-1)|$$
+* **Performance Measurement:** Telmetry is recorded at the sub-second scale to match the dispatch signal. The service provider's performance is quantified using a multi-component **Performance Score ($S_{perf}$)**, valued between $0.0$ and $1.0$, which averages three components (Correlation, Delay, and Precision):
+  $$S_{perf} = \frac{S_{corr} + S_{delay} + S_{prec}}{3}$$
+  * *Correlation ($S_{corr}$):* Measures the phase alignment between the target signal and the response.
+  * *Delay ($S_{delay}$):* Measures the time lag (in seconds) between signal dispatch and resource actuation.
+  * *Precision ($S_{prec}$):* Evaluates the absolute tracking error:
+    $$S_{prec} = 1 - \frac{\sum_{t=1}^T |P_{actual}(t) - P_{target}(t)|}{\sum_{t=1}^T P_{target}(t)}$$
 
 ---
 
@@ -100,32 +151,47 @@ $$RMSE = \sqrt{\frac{1}{N}\sum_{i=1}^N \left(P_{actual, j}(i) - P_{target, j}(i)
 
 #### 2.2.1 Frequency Response
 Primary Frequency Response (PFR) is an autonomous service that stabilizes the system frequency ($f$) during transient events. The service operates locally at the device level without communication delay, using an active power droop curve:
-
-$$P_{droop}(f) = \begin{cases} 
-0 & |f - f_0| \le f_{db} \\
--\frac{f - f_0 - f_{db}}{R \cdot f_0} P_{max} & f_0 + f_{db} < f < f_{max} \\
--\frac{f - f_0 + f_{db}}{R \cdot f_0} P_{max} & f_{min} < f < f_0 - f_{db} 
-\end{cases}$$
-
-where $f_0$ is the nominal frequency (60 Hz), $f_{db}$ is the deadband threshold (typically 0.036 Hz), and $R$ is the droop parameter (typically 5%).
+* **Electrical Attributes:**
+  * *Percent Droop ($R$):* The proportional gain defining the power change relative to frequency deviation (typically $R = 5\%$).
+  * *Deadband ($f_{db}$):* The frequency threshold around the nominal frequency ($f_0 = 60$ Hz) within which the resource remains idle (typically $f_{db} = 0.036$ Hz).
+  * *Active Power Output ($P_{droop}$):*
+    $$P_{droop}(f) = \begin{cases} 
+    0 & |f - f_0| \le f_{db} \\
+    -\frac{f - f_0 - f_{db}}{R \cdot f_0} P_{max} & f_0 + f_{db} < f < f_{max} \\
+    -\frac{f - f_0 + f_{db}}{R \cdot f_0} P_{max} & f_{min} < f < f_0 - f_{db} 
+    \end{cases}$$
+* **Performance Measurement:** Verification is performed post-event using high-resolution local frequency and power logs (sub-second sampling). The evaluation uses a three-step process:
+  1. *Sample Validation:* Filtering logs to ensure data integrity during the frequency disturbance.
+  2. *Response Type Classification:* Distinguishing inertial response (instantaneous, proportional to $df/dt$) from governor-style droop response.
+  3. *Droop Verification:* Confirming that the active power output during the initial response window ($t_{dispatch} + 2$ to $10$ seconds) and sustained response window ($t_{dispatch} + 10$ to $30$ seconds) met the programmed droop slope within acceptable tolerance.
 
 #### 2.2.2 Voltage Management
-Voltage Management regulates local feeder voltage profiles through the injection or absorption of reactive power ($Q$). This service is executed locally by smart inverters using Volt-Var curves. The reactive power output is calculated as a piecewise-linear function of the terminal voltage $V$:
-
-$$Q(V) = \begin{cases} 
-Q_{max} & V \le V_1 \\
-m_1 (V - V_2) & V_1 < V < V_2 \\
-0 & V_2 \le V \le V_3 \\
-m_2 (V - V_3) & V_3 < V < V_4 \\
--Q_{max} & V \ge V_4 
-\end{cases}$$
-
-where $V_1, V_2, V_3, V_4$ represent voltage setpoints and $Q_{max}$ is the inverter's maximum reactive capability.
+Voltage Management regulates local feeder voltage profiles through the injection or absorption of reactive power ($Q$). This service is executed locally by smart inverters using Volt-Var or Volt-Watt curves \cite{bello_optimal_2017, iioka_appropriate_2022}. These autonomous curves must be carefully parameterized to prevent control hunting or voltage oscillations on highly active distribution circuits \cite{dharmawardena_distributed_2022, smith_analysis_2016}. Additionally, the assumption of a constant load power factor in voltage simulations can introduce significant power flow errors, requiring per-phase active and reactive telemetry for accurate voltage modeling \cite{azzolini_analysis_2022}.
+* **Electrical Attributes:**
+  * *Target Voltage Range:* The upper and lower terminal voltage thresholds ($[V_{min}, V_{max}]$) in per-unit (pu).
+  * *Reactive Capability:* Lagging (inductive, absorbing reactive power) and leading (capacitive, injecting reactive power) limits ($Q_{max}$).
+  * *Reactive Power Output ($Q(V)$):*
+    $$Q(V) = \begin{cases} 
+    Q_{max} & V \le V_1 \\
+    m_1 (V - V_2) & V_1 < V < V_2 \\
+    0 & V_2 \le V \le V_3 \\
+    m_2 (V - V_3) & V_3 < V < V_4 \\
+    -Q_{max} & V \ge V_4 
+    \end{cases}$$
+* **Performance Measurement:** Verified by logging active power ($P$), reactive power ($Q$), and root-mean-square (RMS) bus voltage ($V$). M&V checks that the reactive power injected or absorbed at each observed voltage step conformed to the Volt-Var curve slope:
+  $$m_1 = \frac{Q_{max}}{V_1 - V_2}, \quad m_2 = \frac{-Q_{max}}{V_4 - V_3}$$
 
 #### 2.2.3 Blackstart Service
-Blackstart is the process of restoring an electrical grid to operation after a total blackout. This service is characterized by two distinct operational phases:
-1. **Grid-Forming Control**: Distributed generators must switch from grid-following (current injection) to grid-forming (voltage source) mode to establish a stable local voltage and frequency reference in an islanded microgrid.
-2. **Cold Load Pickup**: Staggered reconnection sequences for distribution loads. When re-establishing the network, connecting all loads simultaneously creates massive inrush currents and voltage sags. The ESI must sequence the reconnection steps to keep the transient demand within the ramping capabilities of the local grid-forming resources.
+Blackstart is the process of restoring an electrical grid to operation after a total blackout without relying on external transmission grid power.
+* **Electrical & Control Attributes:**
+  * *Grid-Forming (GFM) Control:* The local resource must operate as a low-impedance voltage source, establishing and maintaining the system voltage magnitude ($V_0$) and frequency reference ($f_0$) dynamically, balancing transient load changes.
+  * *Power Regulation Range:* The maximum real and reactive power changes the GFM inverter can absorb or supply during transient load pickup steps.
+* **Timing & Execution Attributes:**
+  * *Independent Start Capability:* The resource must demonstrate starting and energizing a dead bus without external power.
+  * *Staggered Cold Load Reconnection:* Reconnecting customer feeder circuits sequentially to prevent inrush-induced voltage sags or transformer overload. The reconnection schedule is bounded by:
+    $$P_{total}(t) = \sum_{k} P_{load, k}(t - t_k) \le P_{GFM, max}$$
+    where $t_k$ represents the staggered time steps (e.g. $t_0 = 0$, $t_1 = 12$ min, $t_2 = 24$ min) designed to allow transients to settle before subsequent circuit connections.
+* **Performance Measurement:** Compliance tests verify that the resource successfully started, energized the dead bus, and maintained voltage and frequency within safety limits ($0.95 \le V \le 1.05$ pu; $59.5 \le f \le 60.5$ Hz) during the staggered load pickup steps.
 
 ---
 
@@ -172,7 +238,30 @@ Interoperability is maintained by validating all endpoints against standard IEEE
 
 ---
 
-### 3.3 Mapping GMLC Service Lifecycles to IEEE 2030.5 Resources
+### 3.3 The Device-Agnostic Conflict in IEEE Std 2030.5
+
+A critical tension exists between the architectural tenets of the Energy Service Interface (ESI) and the concrete schemas defined in the IEEE Std 2030.5-2018 standard. ESI Tenet 2 (Device Agnosticism) dictates that grid-facing service requests must target abstract capabilities and remain completely indifferent to the specific physical class or vendor of the underlying Distributed Energy Resource (DER). However, the standard IEEE 2030.5 schema design introduces strong coupling to device types:
+- **`DERCapability` Schema:** Requires clients to declare a specific `type` attribute (e.g., specifying whether the resource is a photovoltaic system, virtual power plant, electric vehicle, or battery energy storage system).
+- **`DERControl` and `deviceCategory` Filtering:** Allows the Grid Service Provider (GSP) to filter active control curves using the `deviceCategory` bitmask (e.g., targeting controls specifically to reciprocating engines, fuel cells, or combined heat and power systems).
+
+This schema-level coupling violates the core ESI principle of device agnosticism by forcing the GSP to acquire low-level awareness of the device classes behind the boundary. To resolve this architectural conflict while remaining structurally compliant with the IEEE 2030.5 standard, the EGoT platform implements two distinct bypass strategies:
+
+#### 3.3.1 The Preferred Strategy: Flow Reservation (Inherently Device-Agnostic)
+The primary and preferred method for executing device-agnostic grid service scheduling in EGoT is through the **Flow Reservation (FR)** function set (endpoints `/frq` and `/frp`). Rather than dispatching technology-specific curves, the GSP and the DER client interact purely through abstract power-flow requests:
+1. **Abstract Request:** The client submits a `FlowReservationRequest` (`POST /frq`) specifying only the active/reactive power magnitudes, start/duration times, and the target connection point. The request does not expose whether the service is backed by a battery ESS, a curtailed PV array, or a flexible building load.
+2. **Abstract Schedule:** The GSP's scheduling engine calculates network capacity constraints and grants a `FlowReservationResponse` (`/frp`) representing an approved power-flow schedule.
+3. **Local Action:** The local customer EMS translates this abstract schedule into device-specific commands for its internal asset fleet.
+This approach perfectly preserves the customer-grid boundary and satisfies all ESI tenets.
+
+#### 3.3.2 The Bypass Strategy: Wildcarding Standard DERControl
+When legacy constraints or local grid codes mandate the use of standard `DERControl` curves (e.g., autonomous Volt-Var or Frequency-Watt controls), the EGoT platform bypasses device-specific targeting at the API gateway and handler level:
+1. **Neutral Capability Registration:** The client sets the `DERCapability::type` attribute to `0` (unknown or not applicable) during registration.
+2. **Wildcard Control Dispatch:** The server publishes `DERControl` payloads with the `deviceCategory` bitmask set to ignore targeting (wildcarding all bits to `1`).
+3. **Agnostic curve execution:** The client EMS downloads the curve and applies it to whichever local resource (be it a PV inverter or battery) is physically capable of meeting the curve's requirements. This decoupling allows standard curve-based programs to run without violating device agnosticism.
+
+---
+
+### 3.4 Mapping GMLC Service Lifecycles to IEEE 2030.5 Resources
 
 The following sections document the exact mappings of the six GMLC grid services across the five ESI lifecycles using standard IEEE 2030.5 resources.
 
@@ -216,42 +305,42 @@ sequenceDiagram
     MUP-->>Client: 201 Created
 ```
 
-#### 3.3.1 Energy Service Lifecycle Mapping
+#### 3.4.1 Energy Service Lifecycle Mapping
 - **Registration**: Discovery of Flow Reservation capabilities (`/dcap`). Client registers its identifier (`/edev`).
 - **Scheduling**: The client submits a `FlowReservationRequest` (`POST /frq`) detailing its capacity and time window. The GSP's greedy scheduler processes the request against transformer limits and writes the approved allocation to the `FlowReservationResponse` (`/frp`).
 - **Operation**: The client retrieves the reservation state (`GET /frp/{id}`) and adjusts its active power generation or charging rate to match the approved schedule.
 - **Validation**: The client posts response states (`POST /rsps/{id}/rsp`) indicating event start and completion.
 - **Settlement**: The client uploads active energy telemetry (`Wh`) to `/mup`. The server's billing engine compares `/mup` data against `/frp` schedules to apply financial credits.
 
-#### 3.3.2 Reserve Service Lifecycle Mapping
+#### 3.4.2 Reserve Service Lifecycle Mapping
 - **Registration**: Client registers load-shed baselines via `/edev/{id}/lsl` during onboarding.
 - **Scheduling**: The GSP schedules contingency controls (`DERControl` or `EndDeviceControl` events) via `/derp/{id}/derc`. These events remain inactive until a contingency trigger.
 - **Operation**: When a contingency event occurs, the GSP activates the event. The client, polling `/derp/{id}/actderc`, detects the active state and executes emergency load-shedding or discharges its reserved energy storage.
 - **Validation**: The client monitors battery state-of-charge (`SoC`) and reports standby availability. It logs alarm events (`/edev/{id}/lel`) if state-of-charge falls below contingency reserve levels.
 - **Settlement**: The GSP processes `/mup` active power telemetry during the contingency event window, verifying the speed of response (ramping rate within 10 minutes) and sustain duration.
 
-#### 3.3.3 Regulation Service Lifecycle Mapping
+#### 3.4.3 Regulation Service Lifecycle Mapping
 - **Registration**: Client registers fast ramping rates and capacity limits under `/der/{id}/dercap`.
 - **Scheduling**: Handled via EIM Flow Reservations (`/frq`). The scheduler updates target active power allocations at 5-minute intervals.
 - **Operation**: The client polls `/derp/{id}/actderc` every 5 minutes to download updated setpoints, modulating active power output to track the EIM schedule.
 - **Validation**: The client uploads its 5-minute average power telemetry. It logs a log event (`/edev/{id}/lel`) if the tracking error exceeds the service limits.
 - **Settlement**: The server's settlement engine computes the average tracking error (RMSE) over the 5-minute windows and applies performance-based adjustments to the billing account.
 
-#### 3.3.4 Frequency Response Lifecycle Mapping
+#### 3.4.4 Frequency Response Lifecycle Mapping
 - **Registration**: Client registers local autonomous frequency control capabilities under `/der/{id}/dercap`.
 - **Scheduling**: The GSP posts default autonomous parameters (droop slopes, frequency deadbands) to the server's DER Curve list (`/derp/{id}/dc`).
 - **Operation**: The client downloads the Frequency-Watt curve (`CurveType=12`) and loads it into the local inverter control loop. The inverter continuously measures local frequency and modulates active power output autonomously according to the droop equation.
 - **Validation**: The client uploads local frequency event logs and active power changes via `/rsps`.
 - **Settlement**: Because primary frequency response is a transient safety service, settlement is typically structured as a fixed standby capability payment. The GSP validates that the client kept the Frequency-Watt curve active by querying `/der/{id}/ders` (DER Status).
 
-#### 3.3.5 Voltage Management Lifecycle Mapping
+#### 3.4.5 Voltage Management Lifecycle Mapping
 - **Registration**: Client registers reactive power limits ($Q_{max}$) and voltage limits under `/der/{id}/dercap`.
 - **Scheduling**: The GSP posts Volt-Var curves (`CurveType=11`) to the DER Program curve list (`/derp/{id}/dc`).
 - **Operation**: The client downloads the curve, senses local grid voltage ($V$), and interpolates its reactive power output ($kVAr$) dynamically.
 - **Validation**: The client reports local voltage logs and inverter state changes (`PUT /der/{id}/ders`).
 - **Settlement**: The client posts cumulative active (`Wh`) and reactive (`VARh`) energy telemetry, along with average voltage (`V`) profiles, to `/mup`. The billing engine verifies that the reactive power injected or absorbed at each observed voltage step conformed to the Volt-Var curve.
 
-#### 3.3.6 Blackstart Service Lifecycle Mapping
+#### 3.4.6 Blackstart Service Lifecycle Mapping
 - **Registration**: Client registers its blackstart capability (indicating if the ESS is grid-forming capable) under `/der/{id}/dercap`.
 - **Scheduling**: GSP schedules Demand Response program controls (`/dr/{id}/edc`) and DER controls for local generators.
 - **Operation**: 
@@ -343,7 +432,7 @@ The battery limits are constrained by maximum charging/discharging rates ($P_{ma
 
 ## 6. Python-OpenDSS Co-Simulation Interface
 
-To evaluate the grid-level physical impacts of the ESI framework, we integrated the Go-based microservices fleet with **OpenDSS** using the `OpenDSSDirect.py` Python library.
+To evaluate the grid-level physical impacts of the ESI framework, we integrated the Go-based microservices fleet with **OpenDSS** using the `OpenDSSDirect.py` Python library \cite{dugan_open_2016}.
 
 ```
 ┌──────────────┐     Power Profile (CSV)     ┌──────────────────────┐
@@ -358,7 +447,7 @@ To evaluate the grid-level physical impacts of the ESI framework, we integrated 
                                              └──────────────────────┘
 ```
 
-The network model chosen is the **IEEE 13-Node Test Feeder** (`model/IEEE13Nodeckt.dss`), which is a highly unbalanced radial distribution circuit.
+The network model chosen is the **IEEE 13-Node Test Feeder** (`model/IEEE13Nodeckt.dss`), which is a highly unbalanced radial distribution circuit. In such circuits, time-series simulations must run at fine temporal resolutions (e.g., sub-15-minute intervals) to accurately capture transient voltage violations and avoid overestimating distribution hosting capacity margins \cite{deboever_impact_2020}.
 - **DER Mapping**: The PV, ESS, and EV emulators are mapped and registered to **Bus 671**, located at the end of the radial feeder. Placing the high-penetration DER assets at the feeder endpoint highlights the physical impacts of Volt-Var curve control and peak load shaving.
 - **Execution Loop**: The simulation script (`scripts/egot_sim.py`) walks through the time-series steps. At each step, it extracts telemetry exports from the EGoT server databases, scales the power levels, and writes them to the OpenDSS generator models (`Generator.<DeviceID>.kW = -P_telemetry / 1000.0`). OpenDSS solves the unbalanced power flow equations and records average bus voltages (in pu) and line losses (in kW).
 
@@ -402,7 +491,7 @@ Both devices are verified as compliant and receive credits based on their comput
 
 ## 8. Communication Overhead (HTTP Traffic Metrics)
 
-To resolve the academic debate regarding the computational weight of standard XML-based REST APIs vs. lightweight IoT protocols (such as MQTT), we parsed the Nginx gateway logs during the validation scenarios. We captured the total requests, data volume transferred, and HTTP statuses:
+To resolve the academic debate regarding the computational weight of standard XML-based REST APIs vs. lightweight IoT protocols (such as MQTT) \cite{slay_adoption_2018}, we parsed the Nginx gateway logs during the validation scenarios. We captured the total requests, data volume transferred, and HTTP statuses:
 
 ### 8.1 Lifecycle Communication Profile
 
@@ -420,7 +509,7 @@ To resolve the academic debate regarding the computational weight of standard XM
 > [!TIP]
 > ### 🎓 Advisor's Defense Tip: Justifying the Protocol Weight
 > If a committee member asks: *"Isn't 34 KB of data too heavy for simple load curtailment?"*
-> You must argue: **Semantic alignment outweighs raw payload size**. Yes, binary MQTT is lighter. However, IEEE 2030.5 provides built-in mTLS, standardized XML schemas, and native resource mappings (e.g., Mirror Usage Points) that enforce absolute interoperability. The 34 KB communication overhead is tiny compared to modern cellular and broadband bandwidth, and its predictability enables utilities to plan network capacity accurately.
+> You must argue: **Semantic alignment outweighs raw payload size**. Yes, binary MQTT is lighter and has lower memory overhead on resource-constrained microcontrollers \cite{slay_adoption_2018}. However, IEEE 2030.5 provides built-in mTLS, standardized XML schemas, and native resource mappings (e.g., Mirror Usage Points) that enforce absolute interoperability \cite{slay_energy_2021}. The 34 KB communication overhead is tiny compared to modern cellular and broadband bandwidth, and its predictability enables utilities to plan network capacity accurately.
 
 ---
 
@@ -430,7 +519,7 @@ To resolve the academic debate regarding the computational weight of standard XM
 Instead of sub-second high-bandwidth tracking (e.g., PJM 4-second signal), we validate regulation using a 5-minute average power tracking error. The settlement engine computes the Root-Mean-Square Error (RMSE) over a 5-minute window (Equation 1), ensuring that standard-compliant clients can be evaluated without overloading local communication channels.
 
 ### 9.2 Voltage Management Telemetry
-The client uploads reactive energy (`VARh`) and average voltage (`V`) telemetry to `/mup` via the `MirrorUsagePoint` schema. The billing engine parses this data to verify that the client dynamically adjusted its reactive power output in compliance with the scheduled Volt-Var curve, preventing active-power-only billing gaps.
+The client uploads reactive energy (`VARh`) and average voltage (`V`) telemetry to `/mup` via the `MirrorUsagePoint` schema. The billing engine parses this data to verify that the client dynamically adjusted its reactive power output in compliance with the scheduled Volt-Var curve, preventing active-power-only billing gaps. In practical settings, these billing calculations must account for smart meter measurement drift and random noise \cite{lin_credibility_2019, kong_estimation_2020}, as well as potential customer-to-transformer phase mapping errors in utility GIS databases that can corrupt voltage correction profiling \cite{luan_distribution_2013}.
 
 ---
 
@@ -448,5 +537,5 @@ This dissertation successfully formalizes the logical and physical implementatio
 
 ### 10.2 Future Extensions
 1. **Dynamic Operating Limits (DOL)**: Transitioning from static thermal capacity checks ($C_j$) to time-varying, temperature-dependent capacity constraints inside the Flow Reservation engine.
-2. **Battery Degradation Integration**: Incorporating a non-linear battery degradation penalty function into the GSP scheduling engine to optimize dispatch curves and prevent capacity fade in customer batteries.
+2. **Battery Degradation Integration**: Incorporating a non-linear battery degradation penalty function into the GSP scheduling engine to optimize dispatch curves and prevent capacity fade in customer batteries under high-frequency cycling services \cite{olympios_progress_2021}.
 3. **Application-Layer Override Overheads**: Quantifying the control delay and network overhead introduced when clients execute local override safety checks on incoming curves.
