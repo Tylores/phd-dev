@@ -1,0 +1,12 @@
+[project]
+name = "ieee-parser"
+version = "0.1.0"
+description = "Dense IEEE Standards Parsing, Rule Mining, and Knowledge Graph Pipeline"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pypdf>=5.0.0",
+]
+
+[project.scripts]
+ieee-parser = "main:main"

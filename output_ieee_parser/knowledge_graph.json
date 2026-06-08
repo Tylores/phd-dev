@@ -1,0 +1,2301 @@
+{
+  "nodes": [
+    {
+      "id": "TERM-service",
+      "label": "Term",
+      "properties": {
+        "name": "service",
+        "frequency": 12
+      }
+    },
+    {
+      "id": "TERM-esi",
+      "label": "Term",
+      "properties": {
+        "name": "esi",
+        "frequency": 11
+      }
+    },
+    {
+      "id": "TERM-grid",
+      "label": "Term",
+      "properties": {
+        "name": "grid",
+        "frequency": 10
+      }
+    },
+    {
+      "id": "TERM-der",
+      "label": "Term",
+      "properties": {
+        "name": "der",
+        "frequency": 8
+      }
+    },
+    {
+      "id": "TERM-information",
+      "label": "Term",
+      "properties": {
+        "name": "information",
+        "frequency": 8
+      }
+    },
+    {
+      "id": "TERM-agreement",
+      "label": "Term",
+      "properties": {
+        "name": "agreement",
+        "frequency": 7
+      }
+    },
+    {
+      "id": "TERM-provider",
+      "label": "Term",
+      "properties": {
+        "name": "provider",
+        "frequency": 7
+      }
+    },
+    {
+      "id": "TERM-implementation",
+      "label": "Term",
+      "properties": {
+        "name": "implementation",
+        "frequency": 6
+      }
+    },
+    {
+      "id": "TERM-gap",
+      "label": "Term",
+      "properties": {
+        "name": "gap",
+        "frequency": 6
+      }
+    },
+    {
+      "id": "TERM-specific",
+      "label": "Term",
+      "properties": {
+        "name": "specific",
+        "frequency": 5
+      }
+    },
+    {
+      "id": "TERM-facility",
+      "label": "Term",
+      "properties": {
+        "name": "facility",
+        "frequency": 4
+      }
+    },
+    {
+      "id": "TERM-performance",
+      "label": "Term",
+      "properties": {
+        "name": "performance",
+        "frequency": 4
+      }
+    },
+    {
+      "id": "TERM-requirements",
+      "label": "Term",
+      "properties": {
+        "name": "requirements",
+        "frequency": 4
+      }
+    },
+    {
+      "id": "TERM-specification",
+      "label": "Term",
+      "properties": {
+        "name": "specification",
+        "frequency": 4
+      }
+    },
+    {
+      "id": "TERM-phase",
+      "label": "Term",
+      "properties": {
+        "name": "phase",
+        "frequency": 4
+      }
+    },
+    {
+      "id": "TERM-include",
+      "label": "Term",
+      "properties": {
+        "name": "include",
+        "frequency": 4
+      }
+    },
+    {
+      "id": "TERM-energy",
+      "label": "Term",
+      "properties": {
+        "name": "energy",
+        "frequency": 4
+      }
+    },
+    {
+      "id": "TERM-process",
+      "label": "Term",
+      "properties": {
+        "name": "process",
+        "frequency": 4
+      }
+    },
+    {
+      "id": "TERM-analysis",
+      "label": "Term",
+      "properties": {
+        "name": "analysis",
+        "frequency": 4
+      }
+    },
+    {
+      "id": "TERM-identified",
+      "label": "Term",
+      "properties": {
+        "name": "identified",
+        "frequency": 4
+      }
+    },
+    {
+      "id": "TERM-device",
+      "label": "Term",
+      "properties": {
+        "name": "device",
+        "frequency": 3
+      }
+    },
+    {
+      "id": "TERM-protocol",
+      "label": "Term",
+      "properties": {
+        "name": "protocol",
+        "frequency": 3
+      }
+    },
+    {
+      "id": "TERM-interface",
+      "label": "Term",
+      "properties": {
+        "name": "interface",
+        "frequency": 1
+      }
+    },
+    {
+      "id": "TERM-frequency",
+      "label": "Term",
+      "properties": {
+        "name": "frequency",
+        "frequency": 1
+      }
+    },
+    {
+      "id": "TERM-timeout",
+      "label": "Term",
+      "properties": {
+        "name": "timeout",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-heartbeat",
+      "label": "Term",
+      "properties": {
+        "name": "heartbeat",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-payload",
+      "label": "Term",
+      "properties": {
+        "name": "payload",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-register",
+      "label": "Term",
+      "properties": {
+        "name": "register",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-client",
+      "label": "Term",
+      "properties": {
+        "name": "client",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-server",
+      "label": "Term",
+      "properties": {
+        "name": "server",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-security",
+      "label": "Term",
+      "properties": {
+        "name": "security",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-voltage",
+      "label": "Term",
+      "properties": {
+        "name": "voltage",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-power",
+      "label": "Term",
+      "properties": {
+        "name": "power",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-load",
+      "label": "Term",
+      "properties": {
+        "name": "load",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-storage",
+      "label": "Term",
+      "properties": {
+        "name": "storage",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-generation",
+      "label": "Term",
+      "properties": {
+        "name": "generation",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-inverter",
+      "label": "Term",
+      "properties": {
+        "name": "inverter",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-connection",
+      "label": "Term",
+      "properties": {
+        "name": "connection",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-capacity",
+      "label": "Term",
+      "properties": {
+        "name": "capacity",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-mtls",
+      "label": "Term",
+      "properties": {
+        "name": "mtls",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-gateway",
+      "label": "Term",
+      "properties": {
+        "name": "gateway",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "TERM-telemetry",
+      "label": "Term",
+      "properties": {
+        "name": "telemetry",
+        "frequency": 0
+      }
+    },
+    {
+      "id": "SEC-0.0",
+      "label": "Section",
+      "properties": {
+        "section_number": "0.0",
+        "title": "Section 0.0"
+      }
+    },
+    {
+      "id": "SEC-1",
+      "label": "Section",
+      "properties": {
+        "section_number": "1",
+        "title": "Register and Qualify"
+      }
+    },
+    {
+      "id": "SEC-1.0",
+      "label": "Section",
+      "properties": {
+        "section_number": "1.0",
+        "title": "Introduction to the ESI Concept"
+      }
+    },
+    {
+      "id": "SEC-2",
+      "label": "Section",
+      "properties": {
+        "section_number": "2",
+        "title": "Schedule"
+      }
+    },
+    {
+      "id": "SEC-2.0",
+      "label": "Section",
+      "properties": {
+        "section_number": "2.0",
+        "title": "ESI Guiding Principles"
+      }
+    },
+    {
+      "id": "SEC-3",
+      "label": "Section",
+      "properties": {
+        "section_number": "3",
+        "title": "Operate"
+      }
+    },
+    {
+      "id": "SEC-3.0",
+      "label": "Section",
+      "properties": {
+        "section_number": "3.0",
+        "title": "Grid-DER Services"
+      }
+    },
+    {
+      "id": "SEC-4",
+      "label": "Section",
+      "properties": {
+        "section_number": "4",
+        "title": "Measure and Verify"
+      }
+    },
+    {
+      "id": "SEC-4.0",
+      "label": "Section",
+      "properties": {
+        "section_number": "4.0",
+        "title": "Lifecycle Phases"
+      }
+    },
+    {
+      "id": "SEC-5",
+      "label": "Section",
+      "properties": {
+        "section_number": "5",
+        "title": "Settle"
+      }
+    },
+    {
+      "id": "SEC-5.0",
+      "label": "Section",
+      "properties": {
+        "section_number": "5.0",
+        "title": "Example Grid-DER Service Interactions"
+      }
+    },
+    {
+      "id": "SEC-5.1",
+      "label": "Section",
+      "properties": {
+        "section_number": "5.1",
+        "title": "Energy Service"
+      }
+    },
+    {
+      "id": "SEC-5.2",
+      "label": "Section",
+      "properties": {
+        "section_number": "5.2",
+        "title": "Reserve Service"
+      }
+    },
+    {
+      "id": "SEC-6.0",
+      "label": "Section",
+      "properties": {
+        "section_number": "6.0",
+        "title": "Dimensions of Interoperability for an ESI"
+      }
+    },
+    {
+      "id": "SEC-6.1",
+      "label": "Section",
+      "properties": {
+        "section_number": "6.1",
+        "title": "Interoperability Categories"
+      }
+    },
+    {
+      "id": "SEC-6.2",
+      "label": "Section",
+      "properties": {
+        "section_number": "6.2",
+        "title": "Interoperability Maturity Levels"
+      }
+    },
+    {
+      "id": "SEC-7.0",
+      "label": "Section",
+      "properties": {
+        "section_number": "7.0",
+        "title": "ESI Review Process"
+      }
+    },
+    {
+      "id": "SEC-7.1",
+      "label": "Section",
+      "properties": {
+        "section_number": "7.1",
+        "title": "Recommended ESI Review Process"
+      }
+    },
+    {
+      "id": "SEC-8.0",
+      "label": "Section",
+      "properties": {
+        "section_number": "8.0",
+        "title": "References"
+      }
+    },
+    {
+      "id": "SEC-D",
+      "label": "Section",
+      "properties": {
+        "section_number": "D",
+        "title": "Narang3"
+      }
+    },
+    {
+      "id": "SEC-J",
+      "label": "Section",
+      "properties": {
+        "section_number": "J",
+        "title": "Kolln,2 T Slay,2 S Widergren2"
+      }
+    },
+    {
+      "id": "SEC-R",
+      "label": "Section",
+      "properties": {
+        "section_number": "R",
+        "title": "Brown,1 J Liu,1 B Nordman1"
+      }
+    },
+    {
+      "id": "SEC-T",
+      "label": "Section",
+      "properties": {
+        "section_number": "T",
+        "title": "Bohn4"
+      }
+    },
+    {
+      "id": "SEC-Y",
+      "label": "Section",
+      "properties": {
+        "section_number": "Y",
+        "title": "Xue. 2023. Energy Services Interface: Requirements Document. LBNL- 2001549, Lawrence"
+      }
+    },
+    {
+      "id": "REQ-001",
+      "label": "Requirement",
+      "properties": {
+        "text": "In this context, a DER facility may consist of a single DER with a communicating controller or may be as complex as a microgrid campus with several buildings and many DERs.",
+        "constraint_type": "Permission",
+        "section_number": "5",
+        "page_number": 4
+      }
+    },
+    {
+      "id": "REQ-002",
+      "label": "Requirement",
+      "properties": {
+        "text": "Defined terms are italicized throughout the document to indicate to the reader that alternate definitions may exist elsewhere, but this document uses the term as defined in this section.",
+        "constraint_type": "Permission",
+        "section_number": "5",
+        "page_number": 6
+      }
+    },
+    {
+      "id": "REQ-003",
+      "label": "Requirement",
+      "properties": {
+        "text": "Note that the ownership of meters is complicated, and they may be under the purview of one or both interacting parties.",
+        "constraint_type": "Permission",
+        "section_number": "1.0",
+        "page_number": 10
+      }
+    },
+    {
+      "id": "REQ-004",
+      "label": "Requirement",
+      "properties": {
+        "text": "Metering and submetering should be described in the grid-DER service agreement.",
+        "constraint_type": "Recommendation",
+        "section_number": "1.0",
+        "page_number": 10
+      }
+    },
+    {
+      "id": "REQ-005",
+      "label": "Requirement",
+      "properties": {
+        "text": "The service provider does not expose the identity or details of specific devices or technologies except as may be needed to demonstrate qualifications to perform the service.",
+        "constraint_type": "Permission",
+        "section_number": "2",
+        "page_number": 13
+      }
+    },
+    {
+      "id": "REQ-006",
+      "label": "Requirement",
+      "properties": {
+        "text": "In practice, an ESI may be implemented using one or more communications protocols and an implementation profile.3",
+        "constraint_type": "Permission",
+        "section_number": "2",
+        "page_number": 14
+      }
+    },
+    {
+      "id": "REQ-007",
+      "label": "Requirement",
+      "properties": {
+        "text": "The service provider may need to demonstrate the ability to meet these performance requirements in order to qualify to provide a grid-DER service.",
+        "constraint_type": "Permission",
+        "section_number": "2",
+        "page_number": 14
+      }
+    },
+    {
+      "id": "REQ-008",
+      "label": "Requirement",
+      "properties": {
+        "text": "An ESI specification needs to cover all the phases for a deployment to achieve interoperability, recognizing that agreements in one phase may become assumed requirements in another.",
+        "constraint_type": "Permission",
+        "section_number": "4.0",
+        "page_number": 16
+      }
+    },
+    {
+      "id": "REQ-009",
+      "label": "Requirement",
+      "properties": {
+        "text": "For example, to schedule and operate, the DER facility identifier established during the registration lifecycle phase may be necessary.",
+        "constraint_type": "Permission",
+        "section_number": "4.0",
+        "page_number": 17
+      }
+    },
+    {
+      "id": "REQ-010",
+      "label": "Requirement",
+      "properties": {
+        "text": "Qualification may include proof of the performance capability of the DER facility.",
+        "constraint_type": "Permission",
+        "section_number": "4.0",
+        "page_number": 17
+      }
+    },
+    {
+      "id": "REQ-011",
+      "label": "Requirement",
+      "properties": {
+        "text": "The grid-DER service agreement may explain how the grid-DER service requester provides advance notice of the schedule for the period of service to allow the grid-DER service provider to plan for delivery of the service.",
+        "constraint_type": "Permission",
+        "section_number": "4.0",
+        "page_number": 17
+      }
+    },
+    {
+      "id": "REQ-012",
+      "label": "Requirement",
+      "properties": {
+        "text": "This phase may also include the negotiation of pricing or incentives, depending on the terms of the agreement.",
+        "constraint_type": "Permission",
+        "section_number": "4.0",
+        "page_number": 17
+      }
+    },
+    {
+      "id": "REQ-013",
+      "label": "Requirement",
+      "properties": {
+        "text": "The agreement may or may not require ongoing communication between the interacting parties during this phase.",
+        "constraint_type": "Permission",
+        "section_number": "4.0",
+        "page_number": 17
+      }
+    },
+    {
+      "id": "REQ-014",
+      "label": "Requirement",
+      "properties": {
+        "text": "The type and frequency of measurement information exchanged should be of a nature and quality that determine the performance of the service provider.",
+        "constraint_type": "Recommendation",
+        "section_number": "4.0",
+        "page_number": 17
+      }
+    },
+    {
+      "id": "REQ-015",
+      "label": "Requirement",
+      "properties": {
+        "text": "For example, settlement may be performed periodically at the end of the billing period.",
+        "constraint_type": "Permission",
+        "section_number": "4.0",
+        "page_number": 17
+      }
+    },
+    {
+      "id": "REQ-016",
+      "label": "Requirement",
+      "properties": {
+        "text": "The ESI must enable the interactions required, consistent with the service agreement, throughout all of the lifecycle phases.",
+        "constraint_type": "Mandatory",
+        "section_number": "5.1",
+        "page_number": 18
+      }
+    },
+    {
+      "id": "REQ-017",
+      "label": "Requirement",
+      "properties": {
+        "text": "The service agreement should not be in conflict with the interconnection agreement and the behaviors defined in it.",
+        "constraint_type": "Prohibition",
+        "section_number": "4",
+        "page_number": 18
+      }
+    },
+    {
+      "id": "REQ-018",
+      "label": "Requirement",
+      "properties": {
+        "text": "The service requestor may call upon the DER facility to produce or consume this energy by signaling the service provider to operate based on the reserved amount of energy.",
+        "constraint_type": "Permission",
+        "section_number": "5.2",
+        "page_number": 19
+      }
+    },
+    {
+      "id": "REQ-019",
+      "label": "Requirement",
+      "properties": {
+        "text": "This includes any constraints that may exist on the relationships between entities.",
+        "constraint_type": "Permission",
+        "section_number": "6.1",
+        "page_number": 21
+      }
+    },
+    {
+      "id": "REQ-020",
+      "label": "Requirement",
+      "properties": {
+        "text": "Note that in the initial stages of ESI development, a formal community of stakeholders may not exist; therefore, other criteria will be emphasized.",
+        "constraint_type": "Permission",
+        "section_number": "6.1",
+        "page_number": 21
+      }
+    },
+    {
+      "id": "REQ-021",
+      "label": "Requirement",
+      "properties": {
+        "text": "This is the same system that was used by The GridWise Architecture Council (GWAC) for the Beta release of the IMM, which described the a roadmap exercise to identify where there may be gaps in that standard (IEEE 2019).(see Table 1) (GWAC 2011).",
+        "constraint_type": "Permission",
+        "section_number": "6.2",
+        "page_number": 21
+      }
+    },
+    {
+      "id": "REQ-022",
+      "label": "Requirement",
+      "properties": {
+        "text": "The ESI should meet the interoperability requirements for the interface throughout the lifecycle phases without violating any of the ESI principles.",
+        "constraint_type": "Recommendation",
+        "section_number": "7.0",
+        "page_number": 23
+      }
+    },
+    {
+      "id": "REQ-023",
+      "label": "Requirement",
+      "properties": {
+        "text": "The following methodology guides the process that should be followed for any standard thought to support grid-DER service interactions.",
+        "constraint_type": "Recommendation",
+        "section_number": "7.0",
+        "page_number": 23
+      }
+    },
+    {
+      "id": "REQ-024",
+      "label": "Requirement",
+      "properties": {
+        "text": "The ESI specification can additionally be applied to converge ESI-centric standards and implementation profiles, which otherwise may have divergent aspects based on the various ad hoc implementations.",
+        "constraint_type": "Permission",
+        "section_number": "7.0",
+        "page_number": 23
+      }
+    },
+    {
+      "id": "REQ-025",
+      "label": "Requirement",
+      "properties": {
+        "text": "The IMM gap analysis and the ESI specification activities must include participants who are very familiar with the standard, implementation profile, or protocol.",
+        "constraint_type": "Mandatory",
+        "section_number": "7.1",
+        "page_number": 23
+      }
+    },
+    {
+      "id": "REQ-026",
+      "label": "Requirement",
+      "properties": {
+        "text": "The leadership of standards development organizations, alliances, or other industry consortia should be engaged to help identify those subject matter experts that might be champions of the ESI and its associated concepts.",
+        "constraint_type": "Recommendation",
+        "section_number": "7.1",
+        "page_number": 23
+      }
+    },
+    {
+      "id": "REQ-027",
+      "label": "Requirement",
+      "properties": {
+        "text": "This process may need to be repeated until key champions of the work are identified.",
+        "constraint_type": "Permission",
+        "section_number": "7.1",
+        "page_number": 23
+      }
+    },
+    {
+      "id": "REQ-028",
+      "label": "Requirement",
+      "properties": {
+        "text": "If the principles are violated, an alternative method should be identified.",
+        "constraint_type": "Recommendation",
+        "section_number": "7.1",
+        "page_number": 23
+      }
+    },
+    {
+      "id": "REQ-029",
+      "label": "Requirement",
+      "properties": {
+        "text": "If no alternative exists, a gap has been identified and should be recorded for a gap analysis.",
+        "constraint_type": "Recommendation",
+        "section_number": "7.1",
+        "page_number": 23
+      }
+    },
+    {
+      "id": "REQ-030",
+      "label": "Requirement",
+      "properties": {
+        "text": "The IMM provides a methodology to determine if there are gaps in interoperability that should be addressed to increase the maturity of the implementation.",
+        "constraint_type": "Recommendation",
+        "section_number": "7.1",
+        "page_number": 24
+      }
+    },
+    {
+      "id": "REQ-031",
+      "label": "Requirement",
+      "properties": {
+        "text": "If it has not reached an appropriate level and a gap is identified, it should be recorded for the gap analysis.",
+        "constraint_type": "Recommendation",
+        "section_number": "7.1",
+        "page_number": 25
+      }
+    },
+    {
+      "id": "REQ-032",
+      "label": "Requirement",
+      "properties": {
+        "text": "The gap analysis should also include recommendations for potential changes to the standard, profile, or protocol and be submitted to the appropriate standards development organization, alliance, or industry consortium.",
+        "constraint_type": "Recommendation",
+        "section_number": "7.1",
+        "page_number": 25
+      }
+    },
+    {
+      "id": "REQ-033",
+      "label": "Requirement",
+      "properties": {
+        "text": "The grid service requestor and grid service provider must be registered with each other.",
+        "constraint_type": "Mandatory",
+        "section_number": "1",
+        "page_number": 27
+      }
+    },
+    {
+      "id": "REQ-034",
+      "label": "Requirement",
+      "properties": {
+        "text": "The following information must be discoverable to support energy scheduling:",
+        "constraint_type": "Mandatory",
+        "section_number": "2",
+        "page_number": 27
+      }
+    },
+    {
+      "id": "REQ-035",
+      "label": "Requirement",
+      "properties": {
+        "text": "Implementation Assumptions: Details not included in the specification that are relevant to criterion Review Process: Orient the reviewers to understand what specific information should be focused on Review resource discovery and announcement capabilities of the standard.",
+        "constraint_type": "Recommendation",
+        "section_number": "5",
+        "page_number": 28
+      }
+    },
+    {
+      "id": "REQ-036",
+      "label": "Requirement",
+      "properties": {
+        "text": "Notes: Highlight information that may be context specific to guide reviewers The discovery service will allow actors to associate information such as tariff or program, location, performance characteristics/requirements, and participation availability.",
+        "constraint_type": "Permission",
+        "section_number": "5",
+        "page_number": 28
+      }
+    },
+    {
+      "id": "REQ-037",
+      "label": "Requirement",
+      "properties": {
+        "text": "The grid service requestor and grid service provider must be registered with each other.",
+        "constraint_type": "Mandatory",
+        "section_number": "1",
+        "page_number": 29
+      }
+    },
+    {
+      "id": "REQ-038",
+      "label": "Requirement",
+      "properties": {
+        "text": "The following information must be discoverable to support energy scheduling:",
+        "constraint_type": "Mandatory",
+        "section_number": "2",
+        "page_number": 29
+      }
+    },
+    {
+      "id": "REQ-039",
+      "label": "Requirement",
+      "properties": {
+        "text": "Review Process: Orient the reviewers to understand what specific information should be focused on Review of standard where resource identification applies and how uniqueness is managed.",
+        "constraint_type": "Recommendation",
+        "section_number": "5",
+        "page_number": 30
+      }
+    },
+    {
+      "id": "REQ-040",
+      "label": "Requirement",
+      "properties": {
+        "text": "Notes: Highlight information that may be context specific to guide reviewers Implementation profiles may already specify how unique resource identifiers are created and managed including roles for third party management, such as a consortium or government agency.",
+        "constraint_type": "Permission",
+        "section_number": "5",
+        "page_number": 30
+      }
+    },
+    {
+      "id": "REQ-041",
+      "label": "Requirement",
+      "properties": {
+        "text": "The DERCapability::type element, described in the schema, is a violation of the device-agnostic principle of the ESI and should be set to \u201c0\u201d to indicate not applicable or unknown.",
+        "constraint_type": "Recommendation",
+        "section_number": "5",
+        "page_number": 31
+      }
+    },
+    {
+      "id": "REQ-042",
+      "label": "Requirement",
+      "properties": {
+        "text": "The DERControl:deviceCategory, outlined in Section 10.10 (see Table A-1, under Location in document), should have all bits set to indicate all device category types or ignored to ensure device-agnostic participation.",
+        "constraint_type": "Recommendation",
+        "section_number": "5",
+        "page_number": 31
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "SEC-0.0",
+      "target": "SEC-0.0",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-1",
+      "target": "SEC-1.0",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-2",
+      "target": "SEC-2.0",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-3",
+      "target": "SEC-3.0",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-4",
+      "target": "SEC-4.0",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-5",
+      "target": "SEC-5.0",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-5",
+      "target": "SEC-5.1",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-5",
+      "target": "SEC-5.2",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-6.0",
+      "target": "SEC-6.0",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-6.0",
+      "target": "SEC-6.1",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-6.0",
+      "target": "SEC-6.2",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-7.0",
+      "target": "SEC-7.0",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-7.0",
+      "target": "SEC-7.1",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-8.0",
+      "target": "SEC-8.0",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-5",
+      "target": "REQ-001",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-001",
+      "target": "TERM-der",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-001",
+      "target": "TERM-facility",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-5",
+      "target": "REQ-002",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-1.0",
+      "target": "REQ-003",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-1.0",
+      "target": "REQ-004",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-004",
+      "target": "TERM-service",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-004",
+      "target": "TERM-grid",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-004",
+      "target": "TERM-der",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-004",
+      "target": "TERM-agreement",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-2",
+      "target": "REQ-005",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-005",
+      "target": "TERM-service",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-005",
+      "target": "TERM-provider",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-005",
+      "target": "TERM-specific",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-005",
+      "target": "TERM-device",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-2",
+      "target": "REQ-006",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-006",
+      "target": "TERM-esi",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-006",
+      "target": "TERM-implementation",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-006",
+      "target": "TERM-protocol",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-2",
+      "target": "REQ-007",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-007",
+      "target": "TERM-service",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-007",
+      "target": "TERM-grid",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-007",
+      "target": "TERM-der",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-007",
+      "target": "TERM-provider",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-007",
+      "target": "TERM-performance",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-007",
+      "target": "TERM-requirements",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-4.0",
+      "target": "REQ-008",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-008",
+      "target": "TERM-esi",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-008",
+      "target": "TERM-agreement",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-008",
+      "target": "TERM-requirements",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-008",
+      "target": "TERM-specification",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-008",
+      "target": "TERM-phase",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-4.0",
+      "target": "REQ-009",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-009",
+      "target": "TERM-der",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-009",
+      "target": "TERM-facility",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-009",
+      "target": "TERM-phase",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-4.0",
+      "target": "REQ-010",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-010",
+      "target": "TERM-der",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-010",
+      "target": "TERM-facility",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-010",
+      "target": "TERM-performance",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-010",
+      "target": "TERM-include",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-4.0",
+      "target": "REQ-011",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-011",
+      "target": "TERM-service",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-011",
+      "target": "TERM-grid",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-011",
+      "target": "TERM-der",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-011",
+      "target": "TERM-agreement",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-011",
+      "target": "TERM-provider",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-4.0",
+      "target": "REQ-012",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-012",
+      "target": "TERM-agreement",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-012",
+      "target": "TERM-phase",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-012",
+      "target": "TERM-include",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-4.0",
+      "target": "REQ-013",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-013",
+      "target": "TERM-agreement",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-013",
+      "target": "TERM-phase",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-4.0",
+      "target": "REQ-014",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-014",
+      "target": "TERM-service",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-014",
+      "target": "TERM-information",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-014",
+      "target": "TERM-provider",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-014",
+      "target": "TERM-performance",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-014",
+      "target": "TERM-frequency",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-4.0",
+      "target": "REQ-015",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "SEC-5.1",
+      "target": "REQ-016",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-016",
+      "target": "TERM-service",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-016",
+      "target": "TERM-esi",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-016",
+      "target": "TERM-agreement",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-016",
+      "target": "TERM-phase",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-4",
+      "target": "REQ-017",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-017",
+      "target": "TERM-service",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-017",
+      "target": "TERM-agreement",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-5.2",
+      "target": "REQ-018",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-018",
+      "target": "TERM-service",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-018",
+      "target": "TERM-der",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-018",
+      "target": "TERM-provider",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-018",
+      "target": "TERM-facility",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-018",
+      "target": "TERM-energy",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-6.1",
+      "target": "REQ-019",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-019",
+      "target": "TERM-include",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-6.1",
+      "target": "REQ-020",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-020",
+      "target": "TERM-esi",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-6.2",
+      "target": "REQ-021",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-021",
+      "target": "TERM-gap",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-7.0",
+      "target": "REQ-022",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-022",
+      "target": "TERM-esi",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-022",
+      "target": "TERM-requirements",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-022",
+      "target": "TERM-phase",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-022",
+      "target": "TERM-interface",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-7.0",
+      "target": "REQ-023",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-023",
+      "target": "TERM-service",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-023",
+      "target": "TERM-grid",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-023",
+      "target": "TERM-der",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-023",
+      "target": "TERM-process",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-7.0",
+      "target": "REQ-024",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-024",
+      "target": "TERM-esi",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-024",
+      "target": "TERM-implementation",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-024",
+      "target": "TERM-specification",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-7.1",
+      "target": "REQ-025",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-025",
+      "target": "TERM-esi",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-025",
+      "target": "TERM-implementation",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-025",
+      "target": "TERM-gap",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-025",
+      "target": "TERM-specification",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-025",
+      "target": "TERM-include",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-025",
+      "target": "TERM-analysis",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-025",
+      "target": "TERM-protocol",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-7.1",
+      "target": "REQ-026",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-026",
+      "target": "TERM-esi",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-7.1",
+      "target": "REQ-027",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-027",
+      "target": "TERM-process",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-027",
+      "target": "TERM-identified",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-7.1",
+      "target": "REQ-028",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-028",
+      "target": "TERM-identified",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-7.1",
+      "target": "REQ-029",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-029",
+      "target": "TERM-gap",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-029",
+      "target": "TERM-analysis",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-029",
+      "target": "TERM-identified",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-7.1",
+      "target": "REQ-030",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-030",
+      "target": "TERM-implementation",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-030",
+      "target": "TERM-gap",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-7.1",
+      "target": "REQ-031",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-031",
+      "target": "TERM-gap",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-031",
+      "target": "TERM-analysis",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-031",
+      "target": "TERM-identified",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-7.1",
+      "target": "REQ-032",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-032",
+      "target": "TERM-gap",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-032",
+      "target": "TERM-include",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-032",
+      "target": "TERM-analysis",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-032",
+      "target": "TERM-protocol",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-1",
+      "target": "REQ-033",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-033",
+      "target": "TERM-service",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-033",
+      "target": "TERM-grid",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-033",
+      "target": "TERM-provider",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-2",
+      "target": "REQ-034",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-034",
+      "target": "TERM-information",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-034",
+      "target": "TERM-energy",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-5",
+      "target": "REQ-035",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-035",
+      "target": "TERM-information",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-035",
+      "target": "TERM-implementation",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-035",
+      "target": "TERM-specific",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-035",
+      "target": "TERM-specification",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-035",
+      "target": "TERM-process",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-5",
+      "target": "REQ-036",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-036",
+      "target": "TERM-service",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-036",
+      "target": "TERM-information",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-036",
+      "target": "TERM-specific",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-036",
+      "target": "TERM-performance",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-036",
+      "target": "TERM-requirements",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-1",
+      "target": "REQ-037",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-037",
+      "target": "TERM-service",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-037",
+      "target": "TERM-grid",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-037",
+      "target": "TERM-provider",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-2",
+      "target": "REQ-038",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-038",
+      "target": "TERM-information",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-038",
+      "target": "TERM-energy",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-5",
+      "target": "REQ-039",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-039",
+      "target": "TERM-information",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-039",
+      "target": "TERM-specific",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-039",
+      "target": "TERM-process",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-5",
+      "target": "REQ-040",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-040",
+      "target": "TERM-information",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-040",
+      "target": "TERM-implementation",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-040",
+      "target": "TERM-specific",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-5",
+      "target": "REQ-041",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-041",
+      "target": "TERM-esi",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-041",
+      "target": "TERM-device",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "SEC-5",
+      "target": "REQ-042",
+      "type": "CONTAINS",
+      "properties": {}
+    },
+    {
+      "source": "REQ-042",
+      "target": "TERM-device",
+      "type": "REFERENCES",
+      "properties": {
+        "context": "text_mention"
+      }
+    },
+    {
+      "source": "REQ-016",
+      "target": "REQ-017",
+      "type": "CONFLICTS_WITH",
+      "properties": {
+        "reason": "Opposing compliance keywords ('Mandatory' vs 'Prohibition') referencing common concept 'service'",
+        "shared_term": "service"
+      }
+    },
+    {
+      "source": "REQ-017",
+      "target": "REQ-033",
+      "type": "CONFLICTS_WITH",
+      "properties": {
+        "reason": "Opposing compliance keywords ('Prohibition' vs 'Mandatory') referencing common concept 'service'",
+        "shared_term": "service"
+      }
+    },
+    {
+      "source": "REQ-017",
+      "target": "REQ-037",
+      "type": "CONFLICTS_WITH",
+      "properties": {
+        "reason": "Opposing compliance keywords ('Prohibition' vs 'Mandatory') referencing common concept 'service'",
+        "shared_term": "service"
+      }
+    }
+  ]
+}

@@ -206,35 +206,73 @@ IEEE Std 2030.5-2018 (Smart Energy Profile 2.0) is an application-layer communic
 
 ### 3.2 Satisfying ESI Pillars in IEEE 2030.5
 
-#### 3.2.1 Privacy Enforcement
-To protect consumer privacy, the EGoT platform decouples service operations from the core device registry. 
-- The client registers its identity under the End Device resource (`/edev`).
-- Operational programs are separated into distinct resource trees: DER Programs (`/derp`) and Demand Response Programs (`/dr`).
-- Telemetry is posted to Mirror Usage Points (`/mup`), which store meter readings.
-The services map to independent, decoupled SQLite databases. Go structures are serialized via `encoding/gob` and written to disk separately, preventing database correlation attacks.
+The core architectural pillars of the Energy Service Interface (ESI)—Privacy, Trust, Security, and Interoperability—must be mapped directly to the specifications of the IEEE 2030.5 standard. Below, we conduct a rigorous compliance audit of these pillars against the extracted standard requirements, identifying structural vulnerabilities, policy contradictions, and the engineering blueprints necessary to achieve production-grade compliance.
 
-#### 3.2.2 Trust Verification
-The ESI verifies transactional trust through the Mirror Usage Point (`MUP`) schema. The client periodically uploads its cumulative energy readings using `MirrorMeterReading` payloads. The server's `operator.SettlementEngine` fetches these telemetry logs and calculates the performance accuracy ($Accuracy$) against the active controls:
+#### 3.2.1 Privacy Enforcement & Telemetry Anonymization
+To protect consumer privacy, the EGoT platform decouples service operations from the core device registry. However, mapping this design to the standard reveals critical tension between telemetry mapping and tracking prevention:
 
-$$Accuracy = 1 - \frac{|Energy_{delivered} - Energy_{scheduled}|}{|Energy_{scheduled}|}$$
+*   **Standard Mapping (Constraints):**
+    *   `REQ-015` (Clause 2): Mandates independent evaluation of data privacy and ownership.
+    *   `REQ-137` (Clause 6.3.3): Restricts the use of the Short Device Identifier (SFDI) in a global context without domain qualification to prevent cross-domain client tracking.
+    *   `REQ-869` (Clause 10.10.4.4.1): Mandates that the cryptographically unique Long Device Identifier (LFDI) *shall* be used directly in the creation of its associated `UsagePoint` or `MirrorUsagePoint` telemetry resources.
+*   **Standard Contradictions & Vulnerabilities:**
+    *   *The Identity-Telemetry Coupling Vulnerability:* While `REQ-137` attempts to prevent client tracking, `REQ-869` forces a hard bind between the immutable cryptographic certificate fingerprint (LFDI) and the high-resolution power consumption or generation profiles (`MirrorUsagePoint`). Anyone with access to the telemetry database or network streams can correlate real-time household behavior patterns directly to a physical device certificate.
+    *   *The Network PIN Exposure Loophole (`REQ-145` vs `REQ-147`):* Exposing device-specific registration PINs over standard HTTP GET resources enables credential scraping, creating an onboarding vulnerability.
+*   **ESI Implementation Blueprint:**
+    *   *Decouple Telemetry from Cryptographic IDs:* Replace raw LFDIs in the `MirrorUsagePoint` (MUP) microservice payloads with rotating, ephemeral UUID pseudonyms, keeping the identity association inside a secure, offline database.
+    *   *Apply Facility-Level Telemetry Aggregation:* Enforce ESI boundaries by aggregating individual asset telemetry (PV, ESS, loads) at the customer premises gateway before exporting data to the grid service provider.
+    *   *Disable Network PIN Exposure:* Reject standard network-based registration PIN requests (`REQ-145` bypass). Enforce out-of-band PIN verification during hardware installation and disable the PIN upon completion.
+    *   *Hardware-Backed Key Protection (`REQ-279`):* Ensure that all private keys are embedded in non-exportable hardware-backed storage (TPM 2.0 or secure chips).
 
-This metrics-driven calculation removes subjective behavioral tracking, validating device performance directly.
+#### 3.2.2 Trust Verification & PKI Boundaries
+The ESI verifies transactional trust through the Mirror Usage Point (`MUP`) schema. In a decentralized smart grid, trust must be bidirectionally verified, yet the standard's certificate management rules present unique challenges:
 
-#### 3.2.3 Security Implementation
-Security is anchored in transport-layer Mutual TLS (mTLS) with ECDSA P-256 curves. The client's unique identity (LFDI) is derived from certificate fingerprints. 
+*   **Standard Mapping (Constraints):**
+    *   `REQ-159`/`161`/`163` (Clause 6.5): Mandates bidirectional authentication during the TLS handshake, requiring both server and client (if it possesses a cert) to validate device certificates.
+    *   `REQ-208` (Clause 6.11.3.1): Recommends a single Smart Energy Root Certificate Authority (SERCA) to anchor the Manufacturing PKI.
+    *   `REQ-229`/`230` (Clause 6.11.3.2): Prohibits the issuance of Certificate Revocation Lists (CRLs) or the operation of OCSP responders for the Manufacturing PKI due to the permanent embedding and indefinite lifetimes of device certificates.
+*   **Standard Contradictions & Vulnerabilities:**
+    *   *The Revocation-Free Trust Hole (`REQ-230` vs `REQ-163`):* Since standard PKI revocation mechanisms (CRLs/OCSP) are prohibited, a compromised device's certificate remains cryptographically valid indefinitely. The transport-layer handshake alone is insufficient to verify trust. Revocation management must be pushed to the application layer, forcing the ESI server to maintain and query a list of revoked client LFDIs on every request.
+    *   *The Static Registration PIN Vulnerability:* Hardcoded registration PIN codes (such as the default `111115`) allow any rogue device presenting a valid certificate to complete onboarding, bypassing true physical authorization checks and violating the requirement that PINs must be random and unique per-device (`REQ-146`).
+*   **ESI Implementation Blueprint:**
+    *   *Enforce Application-Layer LFDI Blacklisting:* Maintain a real-time LFDI blacklist database on the server. On every API request, the server must extract the client's LFDI from the TLS session state and reject the connection if listed, mitigating the lack of CRLs.
+    *   *Strict OID and Constraint Handshake Verification:* Configure the TLS listener (`tlsutil`) to verify that the client certificate chain terminates in the official SERCA (`REQ-208`) and contains the specific policy OID (`1.3.6.1.4.1.37244.1.1` for IEEE 2030.5 device certificates).
+    *   *Dynamic PIN Generation in EDevice:* Replace static PIN handlers with an endpoint that generates secure, random, device-unique PINs (comprising 5 digits plus a modulo-10 checksum) and verifies them during registration.
 
-```
-Raw Client Certificate ➔ SHA-256 Hash ➔ First 40 Hex Characters ➔ LFDI
-```
+#### 3.2.3 Security Implementation & mTLS Constraints
+Application-layer security and authorization rules establish the boundary parameters, protecting both the grid from rogue control curves and client devices from command injection:
 
-To address the **cyber-physical command validation gap** (where an attacker compromises the server and issues a validly signed but physically unstable Volt-Var curve), the EGoT client emulator implements an application-layer check. Before applying any downloaded `DERCurve`, the emulator verifies that:
-1. The curve points do not exceed the local inverter's rated reactive capacity ($Q_{max}$).
-2. The voltage setpoints lie within safe operating limits ($0.90 \le V \le 1.10$ pu).
-3. The active power ramping rate does not exceed physical thermal limits.
-If a curve violates these parameters, the client rejects the control, logs an alarm event (`/edev/{id}/lel`), and falls back to its default autonomous safety curve.
+*   **Standard Mapping (Constraints):**
+    *   `REQ-129` (Clause 6.1): Mandates that application-layer security features *shall* be used over all network types.
+    *   `REQ-130` (Clause 6.1): Permits flexibility by not mandating a specific access control or security policy.
+    *   `REQ-166` (Clause 6.5): Allows bypassing client TLS authentication or executing secondary client authentication after the handshake if the local security policy permits.
+    *   `REQ-182` (Clause 6.8): Recommends that servers support multiple security policies to satisfy different service providers.
+    *   `REQ-191` (Clause 6.9.2): Mandates that authorization *shall* occur upon registration, setting Access Control Lists (ACLs) based on security policy and the client's presence in `aclLocalRegistrationList`.
+*   **Standard Contradictions & Vulnerabilities:**
+    *   *The Policy Mandate Contradiction (`REQ-129` vs `REQ-130`):* By declaring that security features are mandatory (`REQ-129`) but refusing to standardize access control policies (`REQ-130`), the standard risks interoperability failures where conformant devices are rejected by custom local policies.
+    *   *The Client Bypass Security Loophole:* Bypassing client certificates at the TLS handshake (`REQ-166`) forces the server to accept and parse unauthenticated HTTP/XML request payloads. This exposes the microservice routing and parsing stack to Denial of Service (DoS) attacks and XML external entity injection before identity can be verified.
+*   **ESI Implementation Blueprint:**
+    *   *Reject mTLS Bypasses (Strict mTLS):* Disable client authentication bypasses. Require client certificate validation on all endpoints, discarding the secondary authentication option in `REQ-166`.
+    *   *Dynamic ACL Binding (`REQ-191`):* Map client LFDIs extracted during the TLS handshake to their corresponding resources in the database. Implement strict local ACL checks on all resources (e.g. `/derp/{id}/actderc`), verifying that the caller's SFDI has explicit access.
+    *   *Multi-Policy Network Isolation:* Implement virtual host routing at the API Gateway (Nginx) to isolate different security policy profiles. This prevents weaker client policies from degrading security on critical high-performance DER interfaces.
 
-#### 3.2.4 Interoperability Verification
-Interoperability is maintained by validating all endpoints against standard IEEE 2030.5 WADL schemas. Go types and handler stubs are generated using `scaffold-gen` and `wadl-extract` directly from the standard, ensuring structural schema compliance.
+#### 3.2.4 Interoperability Verification & Event Scheduling
+Grid services rely on deterministic scheduling and event execution. The standard defines complex rules for resolving overlapping controls and managing primacy, introducing latency and sequencing challenges:
+
+*   **Standard Mapping (Constraints):**
+    *   `REQ-578`/`580` (Clause 10.2.2.3): Mandates that clients poll event lists and active status changes at the less frequent of 15 minutes or the resource's `pollRate`.
+    *   `REQ-582`/`583` (Clause 10.2.2.3): Prohibits editing events (except for status changes) and mandates that servers cancel events or issue superseding events.
+    *   `REQ-596`/`597`/`598` (Clause 10.2.2.3): Mandates that clients adjust the duration of overlapped events when an overlap is detected, shortening the old event or shifting its start time based on effective boundaries.
+    *   `REQ-613` (Clause 10.2.2.3) & `REQ-655`/`656`/`657` (Clause 10.2.4.6): Mandates that conflicting control modes execute according to primacy order, falling back to the latest `creationTime` if primacy is equal.
+*   **Standard Contradictions & Vulnerabilities:**
+    *   *The Polling Latency Loophole (`REQ-578` vs `REQ-596`):* Relying on a 15-minute polling interval to discover events means client devices will fail to detect emergency controls (e.g., fast active power curtailment) in real-time. This latency breaks the grid's ability to execute fast frequency or voltage stabilization.
+    *   *The Primacy Self-Selection Conflict (`REQ-660` vs `REQ-613`):* Recommending that servers self-select their primacy values can lead to situations where competing third-party aggregators claim the same highest primacy level (`0`). The client is forced to resolve overlaps based solely on the event's `creationTime` (`REQ-613`), resulting in non-deterministic control behavior dependent on upload timing rather than grid safety requirements.
+*   **ESI Implementation Blueprint:**
+    *   *Enforce Server-Sent Events (SSE) Subscriptions:* Bypass the polling latency limit (`REQ-578`) by establishing persistent SSE connections to `/derp/{id}/actderc` for real-time control updates.
+    *   *Stateful Event Scheduler & Duration Truncation:* Implement a local scheduling queue on the client emulator that applies duration truncation logic. If a new event with equal or higher primacy overlaps, shorten the existing event (`REQ-597`) or split and queue the remaining non-overlapping segments (`REQ-598`).
+    *   *Sanitize Primacy Configuration at the ESI Gateway:* Override declared primacy values at the API gateway level based on local regulatory hierarchies (e.g., Local Utility (Primacy 0) > Aggregator (Primacy 1) > Consumer (Primacy 2)), preventing self-selection conflicts.
+    *   *Strict Clock Drift Enforcement:* Enforce clock sync via the Time service (`/tm`). If the emulator detects a clock drift of $\Delta t \ge 2$ seconds, it must abort event execution and log an alarm, preventing scheduling overlap math failures.
+
 
 ---
 
@@ -410,6 +448,81 @@ Go structures are serialized into binary before insertion using the standard `en
 
 ---
 
+### 4.4 Microservice Specification Matrix & Routing Protocols
+The EGoT platform consists of eleven decoupled microservices, each running as a standalone binary communicating over mutual TLS (mTLS). To replicate this architecture, a developer must implement the following service matrix:
+
+1. **DCAP Service (Port 8012)**: Serves the discovery root.
+   - *Endpoints*: `GET /dcap` returns a `DeviceCapability` resource list containing links to all available services. The resource sets the protocol-wide `PollRateAttr` to 900 seconds.
+2. **TimeOfUse Service (Port 8023)**: Handles server time synchronization.
+   - *Endpoints*: `GET /tm` returns a `Time` payload containing UTC Unix timestamps (`CurrentTime`), local Unix timestamps (`LocalTime`), timezone offset (`TzOffset`), and time source quality (Quality=3 for local, Quality=7 for fully synchronized external source).
+3. **EDevice Service (Port 8015)**: Manages device registration and onboarding profiles.
+   - *Endpoints*:
+     - `POST /edev` handles initial client registration. It extracts the client certificate identity and returns a `Location` header pointing to `/edev/{sfdi}`.
+     - `GET /edev/{id}/rg` handles PIN validation and returns a `Registration` payload containing the verification PIN (`111115`).
+     - `GET /edev/{id}/dstat` and `GET /edev/{id}/di` return the current online status and hardware descriptor profiles respectively.
+4. **DER Service (Port 8026)**: Distributes active power controls and operational curves.
+   - *Endpoints*:
+     - `GET /derp` lists available DER Programs.
+     - `GET /derp/{id}/actderc` serves the list of currently active control events (`DERControlList`).
+     - `GET /derp/{id}/dc` and `GET /derp/{id}/dc/{id}` return Volt-Var and Frequency-Watt parameter curves (`DERCurve`).
+5. **FlowReservation Service (Port 8027)**: Coordinates power flow agreements.
+   - *Endpoints*: `POST /frq` accepts flow requests and returns resource locations. `GET /frp/{id}` retrieves approved power allocation responses.
+6. **MUP Service (Port 8017)**: Collects device telemetry.
+   - *Endpoints*: `POST /mup` registers telemetry points (`MirrorUsagePoint`). `POST /mup/{id}` accepts interval meter readings (`MirrorMeterReading`) containing active/reactive power measurements.
+7. **Rsps Service (Port 8041)**: Records transaction logging.
+   - *Endpoints*: `POST /rsps/{sfdi}/rsp` receives `DERControlResponse` status payloads detailing event execution.
+8. **DR Service (Port 8014)**: Manages demand response programs.
+   - *Endpoints*: `GET /dr` lists programs, and `GET /dr/{id}/edc` serves active shedding commands (`EndDeviceControl`).
+9. **Operator Service (Port 8028)**: Hosts the central feeder dispatch logic, coordinating topology checks.
+10. **Bill Service (Port 8011)** and **BRS Service (Port 8010)**: Manage billing accounts, rate structures, and settlement verifications.
+
+---
+
+### 4.5 Decoupled SQLite & Gob Binary Serialization Specification
+To implement the persistence layer without external database dependencies, each service must load its own independent SQLite file using a pure-Go, CGO-free driver (`modernc.org/sqlite`).
+1. **Performance Configuration**: On database load, the connection must be optimized with Write-Ahead Logging (WAL) and synchronous writing disabled to disk-bound bottlenecks:
+   ```sql
+   PRAGMA journal_mode=WAL;
+   PRAGMA synchronous=NORMAL;
+   PRAGMA cache_size=-64000; -- Allocate 64MB cache
+   PRAGMA busy_timeout=5000; -- Prevents lock conflicts under heavy parallel writes
+   ```
+2. **Connection Pooling**: Configure the Go database handler pool limits: Max Open Connections = 25, Max Idle Connections = 5, Max Connection Lifetime = 1 hour.
+3. **Gob Encoding**: The `val` column stores serialized binary structures. Any struct to be saved must be registered with Go's `encoding/gob` library during package initialization (e.g., `gob.Register(&sep.FlowReservationRequest{})`).
+4. **Key Patterns**: Keys are constructed string identifiers. Collections use the owner's SFDI (e.g., `123456789`), while specific resources append the MRID: `sfdi:mrid` (e.g., `123456789:frq-001`), allowing $O(1)$ key lookups and quick index queries via secondary index `owner_id`.
+
+---
+
+### 4.6 mTLS Gateway Verification & Loopback Header Injection
+The secure customer-grid boundary is enforced by a centralized Nginx API Gateway that handles the physical TLS connection.
+1. **Nginx mTLS Settings**: Listening on port 8443, Nginx must be configured to require and verify client certificates:
+   ```nginx
+   ssl_client_certificate ./ssl/ca.crt;
+   ssl_verify_client on;
+   ```
+2. **Cert Injection Header**: Nginx extracts the client's certificate in PEM format and forwards it to the loopback-bound Go services in the request header:
+   ```nginx
+   proxy_set_header X-SSL-Client-Cert $ssl_client_escaped_cert;
+   ```
+3. **Loopback Security Middleware**: To prevent spoofing, Go microservices must wrap their routers in a safety middleware (`CertHeaderMiddleware`):
+   - It inspects `req.RemoteAddr`. If the request originates from an IP address that is not a loopback address (e.g., not localhost/127.0.0.1), it immediately aborts the connection with HTTP `403 Forbidden`.
+   - If the request is loopback, the middleware extracts the `X-SSL-Client-Cert` header, decodes the URL-escaped PEM string, parses the certificate using the `crypto/x509` library, and injects it directly into the request's TLS connection state (`req.TLS.PeerCertificates`). This allows the rest of the application handler to read the certificate transparently.
+
+---
+
+### 4.7 Flow Reservation & Cross-Service Validation Engine
+When a device posts a new `FlowReservationRequest` (`POST /frq`), the service executes cross-validation checks to enforce grid and contract boundaries before saving the request to the database:
+1. **EIM Duration Window Check**: The engine parses `DurationRequested`. It must be exactly 300 seconds (5 minutes) or 900 seconds (15 minutes), matching the real-time Energy Imbalance Market dispatch windows. Any other duration is rejected with HTTP `400 Bad Request`.
+2. **Capacity Limit Validation**: The service extracts the caller's SFDI from the mTLS certificate, queries the store using the owner ID index to retrieve the client's registered `LoadShedAvailability` (LSA) profile, and checks:
+   $$Power_{requested} \le Power_{sheddable}$$
+   If the requested power exceeds the client's registered maximum sheddable capability, the reservation is rejected.
+3. **Interval Overlap Verification**: The engine retrieves all active Demand Response events (`EndDeviceControl` from the DR database) mapped to the client's SFDI. It verifies that the reservation's requested time interval overlaps with at least one active DR control window:
+   $$Interval_{requested} \cap Interval_{activeDR} \neq \emptyset$$
+   If no active DR event exists, or if there is no timing overlap, the reservation is rejected with HTTP `400 Bad Request`, ensuring flow reservations are backed by active utility dispatch events.
+
+---
+
+
 ## 5. Advanced DER Device Emulators
 
 The `emulator-der` binary models the electrical dynamics and protocol compliance of the client-side premises.
@@ -427,6 +540,55 @@ The battery limits are constrained by maximum charging/discharging rates ($P_{ma
 ### 5.3 Coordinated Electric Vehicle (EV) and Controllable Loads
 - **EV Charging**: Models two user profiles. The *Baseline* configuration charging starts immediately at $6$ kW upon plug-in (evening peak). The *Coordinated* configuration shifts charging to midday ($5$ kW target) matching peak solar generation.
 - **Controllable Loads**: Replicates standard residential (dual peak) and commercial (flat daytime) consumption patterns, responding to curtailment signals.
+
+---
+
+### 5.4 CSIP Onboarding Protocol & PIN Verification Sequence
+When a client emulator starts up, it must execute the CSIP (Common Smart Inverter Profile) sequence to establish trust and register its endpoints:
+1. **Step 1: Discovery (`GET /dcap`)**: The client requests the server discovery document. It parses the returned XML to locate the paths for the Time, EDevice, MUP, and DER service roots.
+2. **Step 2: Time Sync (`GET /tm`)**: The client queries the Time service. It decodes the server time and verifies that the `Quality` field is equal to 7 (indicating a fully synchronized network time source), aligning its local system clock.
+3. **Step 3: Registration (`POST /edev`)**: The client submits an `EndDevice` XML payload containing its derived LFDI and calculated SFDI:
+   - *LFDI*: First 40 hex characters of the SHA-256 hash of the client's raw x509 certificate.
+   - *SFDI*: First 9 hex characters of the LFDI parsed as a base-16 uint64.
+   - The server registers the identifiers and responds with HTTP `201 Created`, including the resource instance location in the `Location` header (e.g., `/edev/123456789`).
+4. **Step 4: PIN Validation (`GET /edev/{sfdi}/rg`)**: The client queries the registration resource. The server returns a `Registration` payload containing a hardcoded PIN (`111115`). The client verifies that this matches its pre-configured credential before transitioning to operational status.
+
+---
+
+### 5.5 Mirror Usage Point (MUP) Registration & Telemetry Loop
+To upload performance data for validation and settlement, the client registers a telemetry path and starts a periodic reporting loop:
+1. **MUP Registration**: The client issues `POST /mup` containing a `MirrorUsagePoint` payload, specifying the service type (Electric = 0) and the device's description. The server creates the telemetry resource and returns HTTP `201 Created` with a `Location` header pointing to `/mup/{mup_id}`.
+2. **Reporting Loop**: At regular simulation intervals (default 15 seconds), the client compiles its active power output into a `MirrorMeterReading` XML payload:
+   - The `Reading` value is set to the current real-time power (in Watts).
+   - The client posts this payload to `POST /mup/{mup_id}`, allowing the GSP to record high-resolution power profiles.
+
+---
+
+### 5.6 DER Emulation Models & State Machine Dynamics
+The client emulates three distinct types of flexible assets, updating their physical properties at each simulation step:
+1. **Load Emulator**: Represents residential load. At each step, it sets its active power consumption to a random value between 500 Watts and 2000 Watts:
+   $$Power(t) = -(500 + \text{rand}(0, 1500))\ \text{Watts}$$
+2. **Solar PV Inverter**: Models a solar array. It calculates solar irradiance based on the time of day, modeling the daylight solar curve as a sine wave:
+   $$Irradiance(t) = \begin{cases} 
+   \sin\left(\frac{hour(t) - 6}{12} \pi\right) & 6 < hour(t) < 18 \\
+   0 & \text{otherwise}
+   \end{cases}$$
+   The resulting active power injection is computed as:
+   $$Power(t) = Irradiance(t) \times 5000\ \text{Watts}$$
+3. **Battery Energy Storage System (ESS)**: Models a 10 kWh battery. The State-of-Charge (SoC) tracks the accumulated power over the step interval $\Delta t$ (in hours):
+   $$SoC(t + \Delta t) = \begin{cases}
+   SoC(t) - \frac{Power_{ESS}(t) \times \Delta t \times \eta}{Capacity} & \text{if Charging } (Power_{ESS} < 0) \\
+   SoC(t) - \frac{Power_{ESS}(t) \times \Delta t}{Capacity \times \eta} & \text{if Discharging } (Power_{ESS} > 0)
+   \end{cases}$$
+   where $Capacity = 10000$ Wh, $\eta = 0.95$ (95% round-trip efficiency), and SoC is strictly bounded between $0.10$ and $0.90$ to prevent cell degradation. If SoC violates these boundaries, charging/discharging power is set to 0.
+
+---
+
+### 5.7 Three-Stage Control State Transition Engine
+The client emulator continuously monitors dispatch controls by polling the DER Program active controls endpoint (`GET /derp/1/actderc`). It tracks each control MRID and executes three distinct state transitions:
+1. **Stage 1: Received (Status = 1)**: Upon discovering a new control MRID, the client logs the payload and posts a `DERControlResponse` with `Status = 1` to the validation endpoint (`/rsps/{sfdi}/rsp`).
+2. **Stage 2: Started (Status = 2)**: When the simulation time matches the control's start interval, the client applies the target variables (e.g. mapping `OpModFixedW.SignedPerCent` to its power output), logs the event, and uploads `Status = 2` to `/rsps/{sfdi}/rsp`.
+3. **Stage 3: Completed (Status = 3)**: When the simulation time exceeds the control's duration, the client returns the device to autonomous/default operation and posts `Status = 3` to the server, verifying completion.
 
 ---
 
@@ -450,6 +612,27 @@ To evaluate the grid-level physical impacts of the ESI framework, we integrated 
 The network model chosen is the **IEEE 13-Node Test Feeder** (`model/IEEE13Nodeckt.dss`), which is a highly unbalanced radial distribution circuit. In such circuits, time-series simulations must run at fine temporal resolutions (e.g., sub-15-minute intervals) to accurately capture transient voltage violations and avoid overestimating distribution hosting capacity margins \cite{deboever_impact_2020}.
 - **DER Mapping**: The PV, ESS, and EV emulators are mapped and registered to **Bus 671**, located at the end of the radial feeder. Placing the high-penetration DER assets at the feeder endpoint highlights the physical impacts of Volt-Var curve control and peak load shaving.
 - **Execution Loop**: The simulation script (`scripts/egot_sim.py`) walks through the time-series steps. At each step, it extracts telemetry exports from the EGoT server databases, scales the power levels, and writes them to the OpenDSS generator models (`Generator.<DeviceID>.kW = -P_telemetry / 1000.0`). OpenDSS solves the unbalanced power flow equations and records average bus voltages (in pu) and line losses (in kW).
+
+---
+
+### 6.3 OpenDSS Test Feeder Properties & Grid Simulation Setup
+To enable physical replication of the grid impact analysis, the co-simulation environment couples the Go server database state with OpenDSS using the following parameters:
+
+1. **Test Feeder Electrical Configuration**:
+   - **Substation Transformer**: Connected between `SourceBus` and bus `650`. Rated at 5000 kVA, 3-phase, Delta-Wye configuration, stepping down voltage from 115 kV to 4.16 kV. It has a load loss rating of 0.5% and series resistance $R_s = 0.1$.
+   - **Radial Lines**: Substation-to-bus line `650632` and line `632671` are modeled as 3-phase lines with series resistance $R_1 = 34.65\ \Omega$/mile and reactance $X_1 = 44.1\ \Omega$/mile. The length of each segment is exactly 0.37878 miles.
+   - **Base Load**: A constant-power (Model=1) wye-connected load `Load.L1` is attached to Bus `671` with base ratings of 15 kW and 7.5 kvar.
+2. **DER Generator Definitions**: Emulated clients are injected at Bus `671` (the end of the radial lines). For each registered device, a single-phase OpenDSS Generator is added dynamically using:
+   ```dss
+   New Generator.<DeviceID> Bus1=671 kW=0 kV=2.4 Phases=1
+   ```
+   A voltage base of 2.4 kV is chosen, corresponding to the line-to-neutral voltage of the 4.16 kV system ($4.16 / \sqrt{3}$).
+3. **Simulation Steps**: The simulation is solved daily in 1-minute steps.
+4. **Power Conversion**: Real-time power telemetry is translated from Go to OpenDSS. Go models consumption as positive and generation as negative, whereas OpenDSS defines generator injection as positive. The script scales the power from Watts to kW and negates the value:
+   $$Generator.\langle DeviceID \rangle.kW = -\frac{Power_{telemetry}}{1000.0}$$
+5. **Scenario Modifications**:
+   - **EIM Day-Ahead Scheduling Scenario (2.1)**: Runs for 288 steps (representing 5-minute intervals). In *Baseline*, the EV starts charging at 6 kW at 17:00 (evening peak) and the ESS charges overnight. This load concentration on a single radial end-bus (Bus 671) drops the terminal voltage below ANSI C84.1 limit (falling to 0.91 pu) and increases transformer losses. In *Coordinated*, the EGoT scheduler shifts EV charging to peak solar hours (10:00–14:00) at 5 kW and schedules the ESS to discharge 5 kW during the evening peak. This maintains all feeder voltages above 0.95 pu and reduces system losses by 25%.
+   - **Blackstart Cold Load Pickup Scenario (2.2)**: Simulates circuit restoration. The local transformer capacity limit is restricted to 12 kW. In *Baseline*, five customer loads reconnect simultaneously at step 0, generating an 18 kW inrush overload that trips circuit breakers. In *Coordinated*, the GSP sends staggered controls via ESI, spacing reconnections in 12-minute blocks: Load 1 (4 kW) at $t=0$, Load 2 (5 kW) at $t=12$, EV (5 kW) at $t=24$, and ESS (3 kW) at $t=36$. This staggered ramp-up maintains system demand below the 12 kW threshold, ensuring stable restoration.
 
 ---
 
@@ -520,6 +703,51 @@ Instead of sub-second high-bandwidth tracking (e.g., PJM 4-second signal), we va
 
 ### 9.2 Voltage Management Telemetry
 The client uploads reactive energy (`VARh`) and average voltage (`V`) telemetry to `/mup` via the `MirrorUsagePoint` schema. The billing engine parses this data to verify that the client dynamically adjusted its reactive power output in compliance with the scheduled Volt-Var curve, preventing active-power-only billing gaps. In practical settings, these billing calculations must account for smart meter measurement drift and random noise \cite{lin_credibility_2019, kong_estimation_2020}, as well as potential customer-to-transformer phase mapping errors in utility GIS databases that can corrupt voltage correction profiling \cite{luan_distribution_2013}.
+
+---
+
+### 9.3 Greedy Scheduling & Feeder-Aware Coordination Algorithms
+To manage network capacity constraints, the GSP coordinates device schedules using a multi-step greedy optimization process:
+
+#### 9.3.1 Greedy Power Allocation
+1. **Collect Requests**: The scheduler queries the SQLite database to gather all active `FlowReservationRequest` records.
+2. **Sort by Power**: It sorts the requests in descending order based on the absolute value of their requested power ($|Power_{requested}|$), prioritizing resources with the highest grid impact.
+3. **Initialize Slots**: The scheduling horizon is divided into discrete slots (e.g., 5-minute slots for EIM, 1-hour slots for Day-Ahead). The target power balance for each slot is initialized to the requested grid service load ($P_{target}$).
+4. **Iterative Assignment**:
+   - For each request, the scheduler parses the start time and duration to identify overlapping slots.
+   - It checks if scheduling the request reduces the remaining unsatisfied power balance in any overlapping slot.
+   - If it does, the request is scheduled: the requested power is subtracted from the slot balance, the request MRID is marked as used, and a corresponding `sep.DERControl` is generated.
+5. **Satisfaction Verification**: Once all requests are processed, the scheduler checks if all slot balances have been reduced to zero. If any slot remains unsatisfied, it logs a capacity deficit error.
+
+#### 9.3.2 Feeder-Aware Overload Avoidance
+1. **Topology Loading Matrix**: The coordinator maps devices to specific feeder nodes using a topology mapping configuration. It tracks node loading across all slots in a 2D matrix: `nodeSlotLoading[nodeID][slotIndex]`.
+2. **Capacity Validation Loop**:
+   - During the greedy assignment loop, for each candidate request, the coordinator identifies its target feeder node.
+   - For each overlapping slot, it computes the projected loading at that node:
+     $$ProjectedLoading = nodeSlotLoading[nodeID][slotIndex] + Power_{request}$$
+   - It compares $|ProjectedLoading|$ against the maximum capacity rating ($Capacity_{node}$) for that node.
+   - If the projected loading exceeds the capacity in any slot, the coordinator triggers overload avoidance: the request is skipped, and the scheduler moves to the next candidate device.
+   - If it passes, the coordinator updates both the slot power balance and the node slot loading matrix.
+
+#### 9.3.3 Demand Response Load-Shed Limits
+1. **Feeder Drop Constraint**: To prevent localized over-voltage or voltage oscillations from sudden load curtailments on radial lines, the coordinator limits cumulative load shedding.
+2. **Shedding Threshold**: The maximum load shed permitted at any node is restricted to 50% of the node's rated capacity:
+   $$ShedLimit_{node} = Capacity_{node} \times 0.5$$
+3. **Allocation Loop**: Devices are sorted by `SheddablePower` descending. When scheduling `EndDeviceControl` events, the coordinator verifies that the addition of the device's sheddable power will not cause the cumulative load shed at its mapped node to exceed the 50% limit. If it does, the device is skipped.
+
+---
+
+### 9.4 Settlement Performance Accuracy Engine
+The GSP validates compliance and calculates customer credits by comparing scheduled events against MUP telemetry:
+
+1. **Telemetry Integration**: The settlement engine retrieves the `MirrorUsagePoint` meter readings and active `DERControl` schedules for the billing window.
+2. **Calculate Delivered Energy**: For each telemetry reading, it extracts the measured active power (in Watts) and the duration of the reading interval (in seconds). It computes the energy delivered (in kWh):
+   $$Energy_{delivered} = \sum \frac{Power_{measured} \times Duration_{seconds}}{3,600,000}$$
+3. **Calculate Scheduled Energy**: For each active control event, it extracts the target power (`OpModTargetW`) and the event duration, converting it to scheduled energy (in kWh):
+   $$Energy_{scheduled} = \sum \frac{Power_{scheduled} \times Duration_{seconds}}{3,600,000}$$
+4. **Compute Accuracy Score**: The engine calculates the absolute tracking accuracy:
+   $$Accuracy = 1.0 - \frac{|Energy_{delivered} - Energy_{scheduled}|}{|Energy_{scheduled}|}$$
+   The resulting accuracy score is clamped between $0.0$ and $1.0$. If no energy was scheduled, the accuracy defaults to $1.0$.
 
 ---
 
