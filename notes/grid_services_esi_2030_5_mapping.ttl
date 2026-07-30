@@ -1,0 +1,195 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix cgs: <http://example.org/ontologies/common-grid-services#> .
+@prefix esi: <http://egot.org/ontologies/2024/esi#> .
+@prefix sep: <https://smartgrid.ieee.org/2030-5/2023#> .
+@prefix map: <http://egot.org/ontologies/2024/grid-service-mapping#> .
+
+<http://egot.org/ontologies/2024/grid-service-mapping#> a owl:Ontology ;
+    rdfs:label "Common Grid Services & ESI to IEEE 2030.5 Mapping Ontology" ;
+    rdfs:comment "Formal W3C OWL 2.0 ontology mapping GMLC Common Grid Services (PNNL-34483) and ESI lifecycles (PNNL-37019) to native IEEE 2030.5-2023 (SEP 2.0) schema resources." ;
+    owl:imports <http://example.org/ontologies/common-grid-services#> ;
+    owl:imports <http://egot.org/ontologies/2024/esi#> ;
+    owl:imports <https://smartgrid.ieee.org/2030-5/2023#> .
+
+# ==========================================
+# 1. Structural & Semantic Alignment Classes
+# ==========================================
+
+map:ServiceMapping a owl:Class ;
+    rdfs:label "Service Mapping" ;
+    rdfs:comment "Base class representing a formal alignment mapping between a Common Grid Service, an ESI Service definition, and native IEEE 2030.5 resources." .
+
+map:LifecyclePhaseMapping a owl:Class ;
+    rdfs:label "Lifecycle Phase Mapping" ;
+    rdfs:comment "Maps an ESI lifecycle phase (Registration, Scheduling, Operation, Verification, Settlement) to corresponding IEEE 2030.5 REST resources and protocol flows." .
+
+# ==========================================
+# 2. Object & Datatype Mapping Properties
+# ==========================================
+
+map:mapsCGSGridService a owl:ObjectProperty ;
+    rdfs:label "maps CGS grid service" ;
+    rdfs:domain map:ServiceMapping ;
+    rdfs:range cgs:GridService .
+
+map:mapsESIService a owl:ObjectProperty ;
+    rdfs:label "maps ESI service" ;
+    rdfs:domain map:ServiceMapping ;
+    rdfs:range esi:ESIService .
+
+map:realizedBy2030_5Resource a owl:ObjectProperty ;
+    rdfs:label "realized by 2030.5 resource" ;
+    rdfs:comment "Relates a grid service or ESI lifecycle phase to the native IEEE 2030.5 XML resource that implements it." ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Class .
+
+map:supportsESILifecyclePhase a owl:ObjectProperty ;
+    rdfs:label "supports ESI lifecycle phase" ;
+    rdfs:domain map:LifecyclePhaseMapping ;
+    rdfs:range esi:ESIArchitecturalLayer .
+
+map:usesIEEE2030_5Endpoint a owl:DatatypeProperty ;
+    rdfs:label "uses IEEE 2030.5 endpoint" ;
+    rdfs:comment "URI endpoint path for the IEEE 2030.5 REST resource (e.g., /dcap, /edev, /fres, /derp, /mup)." ;
+    rdfs:domain map:LifecyclePhaseMapping ;
+    rdfs:range xsd:string .
+
+# ==========================================
+# 3. Direct Class & Concept Alignments
+# ==========================================
+
+# Grid Service Concept Equivalences
+cgs:GridService skos:exactMatch esi:ESIService .
+cgs:EnergyService skos:exactMatch esi:EnergyService .
+cgs:ReserveService skos:exactMatch esi:ReserveService .
+cgs:RegulationService skos:exactMatch esi:RegulationService .
+cgs:FrequencyResponseService skos:exactMatch esi:FrequencyResponseService .
+cgs:VoltageManagementService skos:exactMatch esi:VoltageManagementService .
+cgs:BlackstartService skos:exactMatch esi:BlackStartService .
+
+cgs:DistributedEnergyResource skos:exactMatch esi:DistributedEnergyResource .
+cgs:EnergyServicesInterface skos:exactMatch esi:EnergyServiceInterface .
+cgs:FacilityManagementFunction skos:exactMatch esi:FacilitiesManagementFunction .
+
+# ==========================================
+# 4. Service-Specific IEEE 2030.5 Mappings
+# ==========================================
+
+# --- 4.1 Energy Service Mapping ---
+map:EnergyServiceMappingInstance a map:ServiceMapping ;
+    rdfs:label "Energy Service Mapping Instance" ;
+    map:mapsCGSGridService cgs:EnergyService ;
+    map:mapsESIService esi:EnergyService ;
+    map:realizedBy2030_5Resource sep:FlowReservationRequest ;
+    map:realizedBy2030_5Resource sep:FlowReservationResponse ;
+    rdfs:comment "Energy Service represents scheduled active energy production/consumption. Native IEEE 2030.5 realization is achieved via FlowReservationRequest (/fres) and FlowReservationResponse." .
+
+# --- 4.2 Reserve Service Mapping ---
+map:ReserveServiceMappingInstance a map:ServiceMapping ;
+    rdfs:label "Reserve Service Mapping Instance" ;
+    map:mapsCGSGridService cgs:ReserveService ;
+    map:mapsESIService esi:ReserveService ;
+    map:realizedBy2030_5Resource sep:FlowReservationRequest ;
+    map:realizedBy2030_5Resource sep:FlowReservationResponse ;
+    map:realizedBy2030_5Resource sep:LoadShedAvailability ;
+    rdfs:comment "Reserve Service commits capacity for standby or contingency. Realized via FlowReservationResponse (committed power bounds) and LoadShedAvailability." .
+
+# --- 4.3 Regulation Service Mapping ---
+map:RegulationServiceMappingInstance a map:ServiceMapping ;
+    rdfs:label "Regulation Service Mapping Instance" ;
+    map:mapsCGSGridService cgs:RegulationService ;
+    map:mapsESIService esi:RegulationService ;
+    map:realizedBy2030_5Resource sep:DERControl ;
+    map:realizedBy2030_5Resource sep:DERCurve ;
+    map:realizedBy2030_5Resource sep:MirrorUsagePoint ;
+    rdfs:comment "Regulation Service continuously tracks basepoint signals. Realized via DERControl events, DERCurve parameters (opModFixedPF / opModFixedWC), and MirrorUsagePoint high-resolution telemetry." .
+
+# --- 4.4 Frequency Response Service Mapping ---
+map:FrequencyResponseServiceMappingInstance a map:ServiceMapping ;
+    rdfs:label "Frequency Response Service Mapping Instance" ;
+    map:mapsCGSGridService cgs:FrequencyResponseService ;
+    map:mapsESIService esi:FrequencyResponseService ;
+    map:realizedBy2030_5Resource sep:DERCurve ;
+    map:realizedBy2030_5Resource sep:DefaultDERControl ;
+    rdfs:comment "Frequency Response provides rapid autonomous governor droop. Realized natively via IEEE 2030.5 DERCurve CurveType 14 (opModFreqWatt / Frequency-Watt curve) deployed in DefaultDERControl." .
+
+# --- 4.5 Voltage Management Service Mapping ---
+map:VoltageManagementServiceMappingInstance a map:ServiceMapping ;
+    rdfs:label "Voltage Management Service Mapping Instance" ;
+    map:mapsCGSGridService cgs:VoltageManagementService ;
+    map:mapsESIService esi:VoltageManagementService ;
+    map:realizedBy2030_5Resource sep:DERCurve ;
+    map:realizedBy2030_5Resource sep:DERControl ;
+    rdfs:comment "Voltage Management provides autonomous local voltage support. Realized natively via IEEE 2030.5 DERCurve CurveType 1 (opModVoltVar / Volt-VAR curve) and opModVoltWatt." .
+
+# --- 4.6 Blackstart Service Mapping ---
+map:BlackstartServiceMappingInstance a map:ServiceMapping ;
+    rdfs:label "Blackstart Service Mapping Instance" ;
+    map:mapsCGSGridService cgs:BlackstartService ;
+    map:mapsESIService esi:BlackStartService ;
+    map:realizedBy2030_5Resource sep:DemandResponseProgram ;
+    map:realizedBy2030_5Resource sep:EndDeviceControl ;
+    map:realizedBy2030_5Resource sep:LoadShedAvailability ;
+    rdfs:comment "Blackstart Service assists power restoration. Natively realized via DemandResponseProgram and EndDeviceControl load deferment/shedding to reduce cold-start energy demand during feeder energization." .
+
+# ==========================================
+# 5. ESI Lifecycle Phase 2030.5 Realizations
+# ==========================================
+
+# Phase 1: Registration
+map:RegistrationPhaseMapping a map:LifecyclePhaseMapping ;
+    rdfs:label "Registration Phase Mapping" ;
+    map:supportsESILifecyclePhase esi:ESIDiscoveryLayer ;
+    map:realizedBy2030_5Resource sep:DeviceCapability ;
+    map:realizedBy2030_5Resource sep:Time ;
+    map:realizedBy2030_5Resource sep:EndDevice ;
+    map:realizedBy2030_5Resource sep:Registration ;
+    map:usesIEEE2030_5Endpoint "/dcap" ;
+    map:usesIEEE2030_5Endpoint "/tm" ;
+    map:usesIEEE2030_5Endpoint "/edev" ;
+    map:usesIEEE2030_5Endpoint "/edev/{id}/rg" .
+
+# Phase 2: Scheduling
+map:SchedulingPhaseMapping a map:LifecyclePhaseMapping ;
+    rdfs:label "Scheduling Phase Mapping" ;
+    map:supportsESILifecyclePhase esi:ESIAgreementLayer ;
+    map:realizedBy2030_5Resource sep:FlowReservationRequest ;
+    map:realizedBy2030_5Resource sep:FlowReservationResponse ;
+    map:realizedBy2030_5Resource sep:DERProgram ;
+    map:realizedBy2030_5Resource sep:DemandResponseProgram ;
+    map:usesIEEE2030_5Endpoint "/fres" ;
+    map:usesIEEE2030_5Endpoint "/derp" ;
+    map:usesIEEE2030_5Endpoint "/drp" .
+
+# Phase 3: Operation
+map:OperationPhaseMapping a map:LifecyclePhaseMapping ;
+    rdfs:label "Operation Phase Mapping" ;
+    map:supportsESILifecyclePhase esi:ESIServiceLayer ;
+    map:realizedBy2030_5Resource sep:DERControl ;
+    map:realizedBy2030_5Resource sep:DERCurve ;
+    map:realizedBy2030_5Resource sep:EndDeviceControl ;
+    map:usesIEEE2030_5Endpoint "/derp/{id}/derc" ;
+    map:usesIEEE2030_5Endpoint "/derp/{id}/dc" ;
+    map:usesIEEE2030_5Endpoint "/drp/{id}/edc" .
+
+# Phase 4: Verification
+map:VerificationPhaseMapping a map:LifecyclePhaseMapping ;
+    rdfs:label "Verification Phase Mapping" ;
+    map:supportsESILifecyclePhase esi:ESIServiceLayer ;
+    map:realizedBy2030_5Resource sep:MirrorUsagePoint ;
+    map:realizedBy2030_5Resource sep:MirrorMeterReading ;
+    map:usesIEEE2030_5Endpoint "/mup" ;
+    map:usesIEEE2030_5Endpoint "/mup/{id}/mmr" .
+
+# Phase 5: Settlement
+map:SettlementPhaseMapping a map:LifecyclePhaseMapping ;
+    rdfs:label "Settlement Phase Mapping" ;
+    map:supportsESILifecyclePhase esi:ESIServiceLayer ;
+    map:realizedBy2030_5Resource sep:UsagePoint ;
+    map:realizedBy2030_5Resource sep:MeterReading ;
+    map:usesIEEE2030_5Endpoint "/up" ;
+    map:usesIEEE2030_5Endpoint "/up/{id}/mr" .

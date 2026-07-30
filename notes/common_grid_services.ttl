@@ -1,0 +1,192 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix saref: <https://saref.etsi.org/core/> .
+@prefix saref4grid: <https://saref.etsi.org/saref4grid/> .
+@prefix cgs: <http://example.org/ontologies/common-grid-services#> .
+
+<http://example.org/ontologies/common-grid-services#> a owl:Ontology ;
+    rdfs:label "Common Grid Services Ontology" ;
+    rdfs:comment "OWL 2.0 ontology for Common Grid Services based on PNNL-34483 (GMLC 2.5.2 project report)." ;
+    owl:imports <https://saref.etsi.org/saref4grid/> ;
+    owl:imports <https://saref.etsi.org/core/> .
+
+cgs:GridService a owl:Class ;
+    rdfs:label "Grid Service" ;
+    rdfs:comment "Root class for all common grid services defined in GMLC 2.5.2." ;
+    rdfs:subClassOf saref:Service .
+
+cgs:EnergyService a owl:Class ;
+    rdfs:label "Energy Service" ;
+    rdfs:comment "A scheduled production or consumption of energy at an electrical location over a committed period." ;
+    rdfs:subClassOf cgs:GridService .
+
+cgs:ReserveService a owl:Class ;
+    rdfs:label "Reserve Service" ;
+    rdfs:comment "Reserves a specified capacity to produce or consume energy at an electrical location when called upon over a committed period." ;
+    rdfs:subClassOf cgs:GridService .
+
+cgs:RegulationService a owl:Class ;
+    rdfs:label "Regulation Service" ;
+    rdfs:comment "Continuously provides an increase or decrease in real power from an electrical location over a specified scheduled period against a predefined basepoint following a signal." ;
+    rdfs:subClassOf cgs:GridService .
+
+cgs:FrequencyResponseService a owl:Class ;
+    rdfs:label "Frequency Response Service" ;
+    rdfs:comment "Responds to a change in system frequency nearly instantaneously by consuming or producing power over a committed period." ;
+    rdfs:subClassOf cgs:GridService .
+
+cgs:VoltageManagementService a owl:Class ;
+    rdfs:label "Voltage Management Service" ;
+    rdfs:comment "Provides voltage support (raise or lower) within a specified upper and lower voltage range at an electrical location over a committed period." ;
+    rdfs:subClassOf cgs:GridService .
+
+cgs:BlackstartService a owl:Class ;
+    rdfs:label "Blackstart Service" ;
+    rdfs:comment "Energize or remain available without grid electrical supply to energize part of the electric system over a committed period." ;
+    rdfs:subClassOf cgs:GridService .
+
+cgs:DistributedEnergyResource a owl:Class ;
+    rdfs:label "Distributed Energy Resource" ;
+    rdfs:comment "Responsive generation, storage, or load connected at the distribution system level." ;
+    rdfs:subClassOf saref:Device .
+
+cgs:DERFacility a owl:Class ;
+    rdfs:label "DER Facility" ;
+    rdfs:comment "A site that includes one or more DER and has a single point of connection with the electric distribution system." ;
+    rdfs:subClassOf saref4grid:PowerGridNode .
+
+cgs:EnergyServicesInterface a owl:Class ;
+    rdfs:label "Energy Services Interface" ;
+    rdfs:comment "A bi-directional, service-oriented logical interface supporting secure information exchange between customer boundary and external grid entities." ;
+    rdfs:subClassOf saref:Interface .
+
+cgs:FacilityManagementFunction a owl:Class ;
+    rdfs:label "Facility Management Function" ;
+    rdfs:comment "Function managing the electrical devices and systems at a customer site interacting via ESI." .
+
+cgs:GridServiceAgreement a owl:Class ;
+    rdfs:label "Grid Service Agreement" ;
+    rdfs:comment "Specifies what a service provider will accomplish, measurement protocols, and compensation." .
+
+cgs:GridSideEntity a owl:Class ;
+    rdfs:label "Grid Side Entity" ;
+    rdfs:comment "An external interacting party (such as EDC, ISO/RTO, aggregator) that interacts with a DER facility using ESI." .
+
+cgs:OperationalObjective a owl:Class ;
+    rdfs:label "Operational Objective" ;
+    rdfs:comment "Underlying physical grid need (e.g., peak load management, frequency stabilization)." .
+
+cgs:PerformanceExpectation a owl:Class ;
+    rdfs:label "Performance Expectation" ;
+    rdfs:comment "Physical and temporal behavior expected at the point of connection." ;
+    rdfs:subClassOf saref:Property .
+
+cgs:providesService a owl:ObjectProperty ;
+    rdfs:label "provides service" ;
+    rdfs:comment "Relates a DER or DER Facility to the Grid Service it provides." ;
+    rdfs:domain cgs:DERFacility ;
+    rdfs:range cgs:GridService .
+
+cgs:requestsService a owl:ObjectProperty ;
+    rdfs:label "requests service" ;
+    rdfs:comment "Relates a Grid-Side Entity to the Grid Service it requests." ;
+    rdfs:domain cgs:GridSideEntity ;
+    rdfs:range cgs:GridService .
+
+cgs:governedByAgreement a owl:ObjectProperty ;
+    rdfs:label "governed by agreement" ;
+    rdfs:comment "Relates a Grid Service to its governing Grid Service Agreement." ;
+    rdfs:domain cgs:GridService ;
+    rdfs:range cgs:GridServiceAgreement .
+
+cgs:meetsObjective a owl:ObjectProperty ;
+    rdfs:label "meets objective" ;
+    rdfs:comment "Relates a Grid Service to the Operational Objective it satisfies." ;
+    rdfs:domain cgs:GridService ;
+    rdfs:range cgs:OperationalObjective .
+
+cgs:hasPerformanceExpectation a owl:ObjectProperty ;
+    rdfs:label "has performance expectation" ;
+    rdfs:comment "Relates a Grid Service to its required Performance Expectation." ;
+    rdfs:domain cgs:GridService ;
+    rdfs:range cgs:PerformanceExpectation .
+
+cgs:interactsViaESI a owl:ObjectProperty ;
+    rdfs:label "interacts via ESI" ;
+    rdfs:comment "Relates a Facility Management Function to an Energy Services Interface." ;
+    rdfs:domain cgs:FacilityManagementFunction ;
+    rdfs:range cgs:EnergyServicesInterface .
+
+cgs:hasPowerLevel a owl:DataProperty ;
+    rdfs:label "has power level" ;
+    rdfs:comment "Power level for production or consumption over performance period." ;
+    rdfs:domain cgs:PerformanceExpectation ;
+    rdfs:range xsd:decimal .
+
+cgs:hasEnergyQuantity a owl:DataProperty ;
+    rdfs:label "has energy quantity" ;
+    rdfs:comment "Quantity of electric energy produced, consumed, or reserved." ;
+    rdfs:domain cgs:PerformanceExpectation ;
+    rdfs:range xsd:decimal .
+
+cgs:hasResponseTime a owl:DataProperty ;
+    rdfs:label "has response time" ;
+    rdfs:comment "Allowed response time from request signal to required behavior threshold." ;
+    rdfs:domain cgs:PerformanceExpectation ;
+    rdfs:range xsd:string .
+
+cgs:hasDeliveryScheduleStart a owl:DataProperty ;
+    rdfs:label "has delivery schedule start" ;
+    rdfs:comment "Scheduled start time for service delivery." ;
+    rdfs:domain cgs:PerformanceExpectation ;
+    rdfs:range xsd:dateTime .
+
+cgs:hasDeliveryScheduleEnd a owl:DataProperty ;
+    rdfs:label "has delivery schedule end" ;
+    rdfs:comment "Scheduled end time for service delivery." ;
+    rdfs:domain cgs:PerformanceExpectation ;
+    rdfs:range xsd:dateTime .
+
+cgs:hasNotificationLeadTime a owl:DataProperty ;
+    rdfs:label "has notification lead time" ;
+    rdfs:comment "Notification lead time prior to service delivery schedule." ;
+    rdfs:domain cgs:PerformanceExpectation ;
+    rdfs:range xsd:string .
+
+cgs:hasPercentDroop a owl:DataProperty ;
+    rdfs:label "has percent droop" ;
+    rdfs:comment "Percent droop governor setting for frequency response." ;
+    rdfs:domain cgs:FrequencyResponseService ;
+    rdfs:range xsd:decimal .
+
+cgs:hasDeadband a owl:DataProperty ;
+    rdfs:label "has deadband" ;
+    rdfs:comment "Frequency deadband threshold around nominal frequency." ;
+    rdfs:domain cgs:FrequencyResponseService ;
+    rdfs:range xsd:decimal .
+
+cgs:hasPowerMileage a owl:DataProperty ;
+    rdfs:label "has power mileage" ;
+    rdfs:comment "Summation of real power level movements up and down over service period." ;
+    rdfs:domain cgs:RegulationService ;
+    rdfs:range xsd:decimal .
+
+cgs:hasTargetVoltage a owl:DataProperty ;
+    rdfs:label "has target voltage" ;
+    rdfs:comment "Target voltage magnitude at electrical location." ;
+    rdfs:domain cgs:VoltageManagementService ;
+    rdfs:range xsd:decimal .
+
+cgs:hasSignalPeriodicity a owl:DataProperty ;
+    rdfs:label "has signal periodicity" ;
+    rdfs:comment "Periodicity of control signal (e.g., 2s, 4s)." ;
+    rdfs:domain cgs:RegulationService ;
+    rdfs:range xsd:string .
+
+cgs:hasPerformanceScore a owl:DataProperty ;
+    rdfs:label "has performance score" ;
+    rdfs:comment "Performance score or accuracy index (0.0 to 1.0 or 0-100%)." ;
+    rdfs:domain cgs:GridService ;
+    rdfs:range xsd:decimal .

@@ -1,0 +1,232 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix saref: <https://saref.etsi.org/core/> .
+@prefix saref4grid: <https://saref.etsi.org/saref4grid/> .
+@prefix esi: <http://egot.org/ontologies/2024/esi#> .
+
+<http://egot.org/ontologies/2024/esi#> a owl:Ontology ;
+    rdfs:label "Energy Service Interface (ESI) Ontology" ;
+    rdfs:comment "W3C OWL 2.0 ontology for Energy Service Interfaces based on PNNL-37019 specification." ;
+    owl:imports <http://saref.etsi.org/core/> ;
+    owl:imports <https://saref.etsi.org/saref4grid/> .
+
+# --- Classes ---
+esi:EnergyServiceInterface a owl:Class ;
+    rdfs:label "Energy Service Interface" ;
+    rdfs:comment "Bi-directional, service-oriented logical interface between entities inside and outside a customer boundary." .
+
+esi:ESIServiceRequestor a owl:Class ;
+    rdfs:label "ESI Service Requestor" ;
+    rdfs:comment "Entity that requests or consumes energy services across an ESI." .
+
+esi:ESIServiceProvider a owl:Class ;
+    rdfs:label "ESI Service Provider" ;
+    rdfs:comment "Entity that provides and manages resources to deliver energy services across an ESI." .
+
+esi:ESIServiceAgreement a owl:Class ;
+    rdfs:label "ESI Service Agreement" ;
+    rdfs:comment "Digital contract establishing service terms, guarantees, and obligations based on WS-Agreement." .
+
+esi:ESIServiceAgreementTemplate a owl:Class ;
+    rdfs:label "ESI Service Agreement Template" ;
+    rdfs:comment "Agreement offer/template containing creation constraints and baseline service parameters." .
+
+esi:ESIService a owl:Class ;
+    rdfs:label "ESI Service" ;
+    rdfs:comment "Abstract base class for all standard ESI service types." ;
+    rdfs:subClassOf <http://saref.etsi.org/core/Service> .
+
+esi:EnergyService a owl:Class ;
+    rdfs:label "Energy Service" ;
+    rdfs:comment "Energy service type covering price schedules, market prices, demand profile subscriptions, and schedulable DR." ;
+    rdfs:subClassOf esi:ESIService .
+
+esi:ReserveService a owl:Class ;
+    rdfs:label "Reserve Service" ;
+    rdfs:comment "Reserve of capacity or energy resources held for future call-up." ;
+    rdfs:subClassOf esi:ESIService .
+
+esi:RegulationService a owl:Class ;
+    rdfs:label "Regulation Service" ;
+    rdfs:comment "Rapid unscheduled response service to signals such as Area Control Error (ACE)." ;
+    rdfs:subClassOf esi:ESIService .
+
+esi:BlackStartService a owl:Class ;
+    rdfs:label "Black Start Service" ;
+    rdfs:comment "Black start recovery service during power system outages." ;
+    rdfs:subClassOf esi:ESIService .
+
+esi:VoltageManagementService a owl:Class ;
+    rdfs:label "Voltage Management Service" ;
+    rdfs:comment "Autonomous management of voltage or reactive power at customer boundary." ;
+    rdfs:subClassOf esi:ESIService .
+
+esi:FrequencyResponseService a owl:Class ;
+    rdfs:label "Frequency Response Service" ;
+    rdfs:comment "Autonomous response service to AC grid frequency signals." ;
+    rdfs:subClassOf esi:ESIService .
+
+esi:ESIArchitecturalLayer a owl:Class ;
+    rdfs:label "ESI Architectural Layer" ;
+    rdfs:comment "Abstract ESI architectural layer." .
+
+esi:ESIDiscoveryLayer a owl:Class ;
+    rdfs:label "ESI Discovery Layer" ;
+    rdfs:comment "Discovery layer for discovering service provider capabilities and available templates." ;
+    rdfs:subClassOf esi:ESIArchitecturalLayer .
+
+esi:ESIAgreementLayer a owl:Class ;
+    rdfs:label "ESI Agreement Layer" ;
+    rdfs:comment "Agreement layer for negotiating, instantiating, and managing agreement lifecycles." ;
+    rdfs:subClassOf esi:ESIArchitecturalLayer .
+
+esi:ESIServiceLayer a owl:Class ;
+    rdfs:label "ESI Service Layer" ;
+    rdfs:comment "Service layer for operational execution, telemetry, and performance verification." ;
+    rdfs:subClassOf esi:ESIArchitecturalLayer .
+
+esi:ESIServiceAgreementContext a owl:Class ;
+    rdfs:label "ESI Service Agreement Context" ;
+    rdfs:comment "Context metadata for an ESI service agreement (location, expiration, participants)." .
+
+esi:ESIServiceTerm a owl:Class ;
+    rdfs:label "ESI Service Term" ;
+    rdfs:comment "Technical specification or description term of an ESI service agreement." .
+
+esi:ESIGuaranteeTerm a owl:Class ;
+    rdfs:label "ESI Guarantee Term" ;
+    rdfs:comment "Quality of Service (QoS) guarantee term specifying performance metrics, rewards, and penalties." .
+
+esi:AgreementCreationConstraint a owl:Class ;
+    rdfs:label "Agreement Creation Constraint" ;
+    rdfs:comment "Precondition or qualification requirement that must be satisfied prior to agreement instantiation." .
+
+esi:FacilitiesManagementFunction a owl:Class ;
+    rdfs:label "Facilities Management Function" ;
+    rdfs:comment "Provider-side management function coordinating control over flexible energy resources." .
+
+esi:RequestorManagementFunction a owl:Class ;
+    rdfs:label "Requestor Management Function" ;
+    rdfs:comment "Requestor-side management function translating operational grid objectives into ESI service messages." .
+
+esi:DistributedEnergyResource a owl:Class ;
+    rdfs:label "Distributed Energy Resource" ;
+    rdfs:comment "Controllable load, generation, or storage asset (e.g. EV, battery, solar, thermal storage)." ;
+    rdfs:subClassOf <https://saref.etsi.org/saref4grid/PowerGridNode> .
+
+esi:ESISchedule a owl:Class ;
+    rdfs:label "ESI Schedule" ;
+    rdfs:comment "Timeline schedule governing service start, end, lead time, and ramp intervals." .
+
+esi:BooleanExpressionTree a owl:Class ;
+    rdfs:label "Boolean Expression Tree" ;
+    rdfs:comment "Boolean expression tree structure used for qualification and performance verification." .
+
+# --- Object Properties ---
+esi:hasRequestor a owl:ObjectProperty ;
+    rdfs:label "has requestor" ;
+    rdfs:domain esi:ESIServiceAgreement ;
+    rdfs:range esi:ESIServiceRequestor .
+
+esi:hasProvider a owl:ObjectProperty ;
+    rdfs:label "has provider" ;
+    rdfs:domain esi:ESIServiceAgreement ;
+    rdfs:range esi:ESIServiceProvider .
+
+esi:hasAgreementContext a owl:ObjectProperty ;
+    rdfs:label "has agreement context" ;
+    rdfs:domain esi:ESIServiceAgreement ;
+    rdfs:range esi:ESIServiceAgreementContext .
+
+esi:hasServiceTerm a owl:ObjectProperty ;
+    rdfs:label "has service term" ;
+    rdfs:domain esi:ESIServiceAgreement ;
+    rdfs:range esi:ESIServiceTerm .
+
+esi:hasGuaranteeTerm a owl:ObjectProperty ;
+    rdfs:label "has guarantee term" ;
+    rdfs:domain esi:ESIServiceAgreement ;
+    rdfs:range esi:ESIGuaranteeTerm .
+
+esi:derivedFromTemplate a owl:ObjectProperty ;
+    rdfs:label "derived from template" ;
+    rdfs:domain esi:ESIServiceAgreement ;
+    rdfs:range esi:ESIServiceAgreementTemplate .
+
+esi:hasCreationConstraint a owl:ObjectProperty ;
+    rdfs:label "has creation constraint" ;
+    rdfs:domain esi:ESIServiceAgreementTemplate ;
+    rdfs:range esi:AgreementCreationConstraint .
+
+esi:managesResource a owl:ObjectProperty ;
+    rdfs:label "manages resource" ;
+    rdfs:domain esi:FacilitiesManagementFunction ;
+    rdfs:range esi:DistributedEnergyResource .
+
+esi:operatesAtLayer a owl:ObjectProperty ;
+    rdfs:label "operates at layer" ;
+    rdfs:domain esi:ESIServiceAgreement ;
+    rdfs:range esi:ESIArchitecturalLayer .
+
+esi:definesSchedule a owl:ObjectProperty ;
+    rdfs:label "defines schedule" ;
+    rdfs:domain esi:ESIServiceTerm ;
+    rdfs:range esi:ESISchedule .
+
+esi:providesService a owl:ObjectProperty ;
+    rdfs:label "provides service" ;
+    rdfs:domain esi:ESIServiceProvider ;
+    rdfs:range esi:ESIService .
+
+esi:requestsService a owl:ObjectProperty ;
+    rdfs:label "requests service" ;
+    rdfs:domain esi:ESIServiceRequestor ;
+    rdfs:range esi:ESIService .
+
+# --- Datatype Properties ---
+esi:agreementID a owl:DatatypeProperty ;
+    rdfs:label "agreement ID" ;
+    rdfs:domain esi:ESIServiceAgreement ;
+    rdfs:range xsd:string .
+
+esi:templateID a owl:DatatypeProperty ;
+    rdfs:label "template ID" ;
+    rdfs:domain esi:ESIServiceAgreementTemplate ;
+    rdfs:range xsd:string .
+
+esi:agreementState a owl:DatatypeProperty ;
+    rdfs:label "agreement state" ;
+    rdfs:domain esi:ESIServiceAgreement ;
+    rdfs:range xsd:string .
+
+esi:injectionPointLocation a owl:DatatypeProperty ;
+    rdfs:label "injection point location" ;
+    rdfs:domain esi:ESIServiceAgreementContext ;
+    rdfs:range xsd:string .
+
+esi:expirationTime a owl:DatatypeProperty ;
+    rdfs:label "expiration time" ;
+    rdfs:domain esi:ESIServiceAgreementContext ;
+    rdfs:range xsd:dateTime .
+
+esi:rewardAmount a owl:DatatypeProperty ;
+    rdfs:label "reward amount" ;
+    rdfs:domain esi:ESIGuaranteeTerm ;
+    rdfs:range xsd:decimal .
+
+esi:penaltyAmount a owl:DatatypeProperty ;
+    rdfs:label "penalty amount" ;
+    rdfs:domain esi:ESIGuaranteeTerm ;
+    rdfs:range xsd:decimal .
+
+esi:leadTime a owl:DatatypeProperty ;
+    rdfs:label "lead time" ;
+    rdfs:domain esi:ESISchedule ;
+    rdfs:range xsd:duration .
+
+esi:rampRate a owl:DatatypeProperty ;
+    rdfs:label "ramp rate" ;
+    rdfs:domain esi:ESISchedule ;
+    rdfs:range xsd:decimal .
