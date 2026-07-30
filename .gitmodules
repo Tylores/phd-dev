@@ -1,6 +1,7 @@
 [submodule "dissertation"]
 	path = dissertation
-	url = ./dissertation
+	url = https://github.com/Tylores/dissertation.git
 [submodule "egot"]
 	path = egot
-	url = ./egot
+	url = https://github.com/Tylores/egot.git
+
